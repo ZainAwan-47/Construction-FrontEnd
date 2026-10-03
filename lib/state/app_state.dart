@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user_role.dart';
 import '../models/fund_transfer.dart';
+import '../models/expense.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -16,10 +17,98 @@ class AppState extends ChangeNotifier {
   }
 
   // --- MOCK FINANCIAL DATA (Phase 3 Foundation) ---
-  final double _totalProjectBudget = 5000000.0; 
-  final double _totalApprovedExpenses = 2300000.0; 
-  final double _totalDisputedExpenses = 150000.0; 
-  final int _pendingReviewCount = 3;
+  final double _totalProjectBudget = 5000000.0;
+
+  // --- PHASE 5 & 6: EXPENSE STATE ---
+  final List<Expense> _expenses = [
+    Expense(
+      id: 'exp_001',
+      category: 'Materials',
+      amount: 2300000.0,
+      description: 'Initial structural materials',
+      receiptAttached: true,
+      date: DateTime.now().subtract(const Duration(days: 15)),
+      status: ExpenseStatus.approved,
+    ),
+    Expense(
+      id: 'exp_002',
+      category: 'Equipment',
+      amount: 150000.0,
+      description: 'Generator rental',
+      receiptAttached: true,
+      date: DateTime.now().subtract(const Duration(days: 5)),
+      status: ExpenseStatus.disputed,
+      feedback: 'Price too high. Please provide market rate comparison.',
+    ),
+    Expense(
+      id: 'exp_003',
+      category: 'Plumbing',
+      amount: 45000.0,
+      description: 'PVC pipes and fittings',
+      receiptAttached: true,
+      date: DateTime.now().subtract(const Duration(days: 1)),
+      status: ExpenseStatus.pending,
+    ),
+  ];
+
+  List<Expense> get allExpenses => List.unmodifiable(_expenses);
+
+  // Dynamic Expense Calculations
+  double get totalApprovedExpenses => _expenses
+      .where((e) => e.status == ExpenseStatus.approved)
+      .fold(0.0, (sum, e) => sum + e.amount);
+
+  double get totalDisputedExpenses => _expenses
+      .where((e) => e.status == ExpenseStatus.disputed)
+      .fold(0.0, (sum, e) => sum + e.amount);
+
+  int get pendingReviewCount => _expenses
+      .where((e) => e.status == ExpenseStatus.pending)
+      .length;
+
+  void addExpense(String category, double amount, String description, bool receiptAttached) {
+    _expenses.insert(
+      0, 
+      Expense(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        category: category,
+        amount: amount,
+        description: description,
+        receiptAttached: receiptAttached,
+        date: DateTime.now(),
+        status: ExpenseStatus.pending, 
+      ),
+    );
+    notifyListeners();
+  }
+
+  // --- PHASE 6: OWNER REVIEW ACTIONS (Strictly Enforced) ---
+  void approveExpense(String id) {
+    final expense = _expenses.firstWhere((e) => e.id == id);
+    
+    // ENFORCEMENT: Reject invalid state transitions. 
+    // An expense MUST be pending to be approved.
+    if (expense.status != ExpenseStatus.pending) {
+      return; 
+    }
+    
+    expense.status = ExpenseStatus.approved;
+    notifyListeners();
+  }
+
+  void disputeExpense(String id, String feedback) {
+    final expense = _expenses.firstWhere((e) => e.id == id);
+    
+    // ENFORCEMENT: Reject invalid state transitions.
+    // An expense MUST be pending to be disputed.
+    if (expense.status != ExpenseStatus.pending) {
+      return; 
+    }
+    
+    expense.status = ExpenseStatus.disputed;
+    expense.feedback = feedback;
+    notifyListeners();
+  }
 
   // --- PHASE 4: FUNDS TRANSFER STATE ---
   final List<FundTransfer> _transfers = [
@@ -31,20 +120,11 @@ class AppState extends ChangeNotifier {
       proofAttached: true,
       status: TransferStatus.confirmed,
     ),
-    FundTransfer(
-      id: 'tx_002',
-      amount: 500000.0,
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      reference: 'Material Top-up',
-      proofAttached: true,
-      status: TransferStatus.awaitingConfirmation,
-    ),
   ];
 
-  List<FundTransfer> get pendingTransfers => 
+  List<FundTransfer> get pendingTransfers =>
       _transfers.where((t) => t.status == TransferStatus.awaitingConfirmation).toList();
 
-  // Dynamic calculations based on transfer state
   double get _totalConfirmedInflow => _transfers
       .where((t) => t.status == TransferStatus.confirmed)
       .fold(0.0, (sum, t) => sum + t.amount);
@@ -53,7 +133,6 @@ class AppState extends ChangeNotifier {
       .where((t) => t.status == TransferStatus.awaitingConfirmation)
       .fold(0.0, (sum, t) => sum + t.amount);
 
-  // --- PHASE 4: WORKFLOW ACTIONS ---
   void addTransfer(double amount, String reference, bool proofAttached) {
     _transfers.add(
       FundTransfer(
@@ -62,7 +141,7 @@ class AppState extends ChangeNotifier {
         date: DateTime.now(),
         reference: reference,
         proofAttached: proofAttached,
-        status: TransferStatus.awaitingConfirmation, // Always starts unconfirmed
+        status: TransferStatus.awaitingConfirmation,
       ),
     );
     notifyListeners();
@@ -74,12 +153,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- CORE BUSINESS LOGIC FORMULAS (Unchanged) ---
+  // --- CORE BUSINESS LOGIC FORMULAS ---
   double get totalProjectBudget => _totalProjectBudget;
-  double get totalApprovedExpenses => _totalApprovedExpenses;
-  double get totalDisputedExpenses => _totalDisputedExpenses;
-  int get pendingReviewCount => _pendingReviewCount;
-
-  double get remainingProjectBudget => _totalProjectBudget - _totalApprovedExpenses;
-  double get contractorCashInHand => _totalConfirmedInflow - _totalApprovedExpenses;
+  double get remainingProjectBudget => _totalProjectBudget - totalApprovedExpenses;
+  double get contractorCashInHand => _totalConfirmedInflow - totalApprovedExpenses;
 }

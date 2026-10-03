@@ -19,7 +19,7 @@ class ContractorDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppState();
-
+    
     return Scaffold(
       backgroundColor: AppColors.surfaceWarmGray,
       appBar: AppBar(
@@ -94,7 +94,6 @@ class ContractorDashboardScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
             const Text('Working Capital', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
             const SizedBox(height: 12),
             GridView.count(
@@ -120,7 +119,6 @@ class ContractorDashboardScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 32),
-
             const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
             const SizedBox(height: 12),
             GridView.count(
@@ -136,13 +134,15 @@ class ContractorDashboardScreen extends StatelessWidget {
                   subtitle: 'Upload receipt',
                   icon: Icons.add_a_photo_outlined,
                   isPrimary: true,
-                  onTap: () => Navigator.pushNamed(context, AppRouter.placeholderRoute),
+                  // PHASE 5 ROUTE APPLIED
+                  onTap: () => Navigator.pushNamed(context, AppRouter.createExpenseRoute),
                 ),
                 QuickActionCard(
                   title: 'My Expenses',
                   subtitle: 'View history',
                   icon: Icons.receipt_long_outlined,
-                  onTap: () => Navigator.pushNamed(context, AppRouter.placeholderRoute),
+                  // PHASE 5 ROUTE APPLIED
+                  onTap: () => Navigator.pushNamed(context, AppRouter.myExpensesRoute),
                 ),
                 QuickActionCard(
                   title: 'Milestones',
@@ -165,7 +165,12 @@ class ContractorDashboardScreen extends StatelessWidget {
         role: state.activeRole,
         currentIndex: 0,
         onTap: (index) {
-          if (index != 0) Navigator.pushNamed(context, AppRouter.placeholderRoute);
+          // PHASE 5 BOTTOM NAV APPLIED
+          if (index == 1) {
+            Navigator.pushNamed(context, AppRouter.myExpensesRoute);
+          } else if (index != 0) {
+            Navigator.pushNamed(context, AppRouter.placeholderRoute);
+          }
         },
       ),
     );
