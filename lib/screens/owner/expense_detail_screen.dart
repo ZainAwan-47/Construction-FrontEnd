@@ -235,9 +235,9 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                         ),
                       ],
                     ),
-                  ] else if (expense.feedback != null && expense.feedback!.isNotEmpty) ...[
-                    // Show dispute reason if it exists
-                    const Text('Owner Feedback', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                  // PHASE 7: History List implementation replacing single feedback string
+                  ] else if (expense.feedbackHistory.isNotEmpty) ...[
+                    const Text('Dispute History', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
                     const SizedBox(height: 12),
                     Container(
                       width: double.infinity,
@@ -247,9 +247,35 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppColors.error.withOpacity(0.3)),
                       ),
-                      child: Text(
-                        expense.feedback!,
-                        style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontStyle: FontStyle.italic),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: expense.feedbackHistory.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final text = entry.value;
+                          final isLatest = index == expense.feedbackHistory.length - 1;
+                          
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: isLatest ? 0 : 12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  isLatest ? 'Latest Feedback' : 'Previous Feedback ${index + 1}',
+                                  style: TextStyle(
+                                    fontSize: 11, 
+                                    fontWeight: FontWeight.w800, 
+                                    color: isLatest ? AppColors.error : AppColors.hint
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  text, 
+                                  style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontStyle: FontStyle.italic),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
                   ],

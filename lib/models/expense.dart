@@ -6,13 +6,13 @@ enum ExpenseStatus {
 
 class Expense {
   final String id;
-  final String category;
-  final double amount;
-  final String description;
-  final bool receiptAttached;
+  String category;
+  double amount;
+  String description;
+  bool receiptAttached;
   final DateTime date;
   ExpenseStatus status;
-  String? feedback; // Added for Phase 6 Dispute workflow
+  List<String> feedbackHistory; // Phase 7: History array instead of single string
 
   Expense({
     required this.id,
@@ -22,6 +22,6 @@ class Expense {
     required this.receiptAttached,
     required this.date,
     this.status = ExpenseStatus.pending,
-    this.feedback,
-  });
+    List<String>? feedbackHistory,
+  }) : feedbackHistory = feedbackHistory ?? [];
 }

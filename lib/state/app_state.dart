@@ -16,10 +16,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- MOCK FINANCIAL DATA (Phase 3 Foundation) ---
   final double _totalProjectBudget = 5000000.0;
 
-  // --- PHASE 5 & 6: EXPENSE STATE ---
   final List<Expense> _expenses = [
     Expense(
       id: 'exp_001',
@@ -38,7 +36,7 @@ class AppState extends ChangeNotifier {
       receiptAttached: true,
       date: DateTime.now().subtract(const Duration(days: 5)),
       status: ExpenseStatus.disputed,
-      feedback: 'Price too high. Please provide market rate comparison.',
+      feedbackHistory: ['Price too high. Please provide market rate comparison.'],
     ),
     Expense(
       id: 'exp_003',
@@ -53,7 +51,6 @@ class AppState extends ChangeNotifier {
 
   List<Expense> get allExpenses => List.unmodifiable(_expenses);
 
-  // Dynamic Expense Calculations
   double get totalApprovedExpenses => _expenses
       .where((e) => e.status == ExpenseStatus.approved)
       .fold(0.0, (sum, e) => sum + e.amount);
@@ -82,35 +79,39 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- PHASE 6: OWNER REVIEW ACTIONS (Strictly Enforced) ---
   void approveExpense(String id) {
     final expense = _expenses.firstWhere((e) => e.id == id);
-    
-    // ENFORCEMENT: Reject invalid state transitions. 
-    // An expense MUST be pending to be approved.
-    if (expense.status != ExpenseStatus.pending) {
-      return; 
-    }
-    
+    if (expense.status != ExpenseStatus.pending) return; 
     expense.status = ExpenseStatus.approved;
     notifyListeners();
   }
 
   void disputeExpense(String id, String feedback) {
     final expense = _expenses.firstWhere((e) => e.id == id);
-    
-    // ENFORCEMENT: Reject invalid state transitions.
-    // An expense MUST be pending to be disputed.
-    if (expense.status != ExpenseStatus.pending) {
-      return; 
-    }
+    if (expense.status != ExpenseStatus.pending) return; 
     
     expense.status = ExpenseStatus.disputed;
-    expense.feedback = feedback;
+    expense.feedbackHistory.add(feedback); // Appends, does not overwrite
     notifyListeners();
   }
 
-  // --- PHASE 4: FUNDS TRANSFER STATE ---
+  // --- PHASE 7: CONTRACTOR ADJUSTMENT ACTION ---
+  void resubmitExpense(String id, String category, double amount, String description, bool receiptAttached) {
+    final expense = _expenses.firstWhere((e) => e.id == id);
+    
+    // ENFORCEMENT: Only disputed expenses can be resubmitted.
+    if (expense.status != ExpenseStatus.disputed) return;
+
+    // Retain ID, mutate fields
+    expense.category = category;
+    expense.amount = amount;
+    expense.description = description;
+    expense.receiptAttached = receiptAttached;
+    expense.status = ExpenseStatus.pending; // Returns to pending queue
+    
+    notifyListeners();
+  }
+
   final List<FundTransfer> _transfers = [
     FundTransfer(
       id: 'tx_001',
@@ -153,7 +154,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- CORE BUSINESS LOGIC FORMULAS ---
   double get totalProjectBudget => _totalProjectBudget;
   double get remainingProjectBudget => _totalProjectBudget - totalApprovedExpenses;
   double get contractorCashInHand => _totalConfirmedInflow - totalApprovedExpenses;
