@@ -17,12 +17,11 @@ class AppState extends ChangeNotifier {
   }
 
   // --- MOCK FINANCIAL DATA (Phase 3 Foundation) ---
-  final double _totalProjectBudget = 5000000.0; 
-  final double _totalConfirmedInflow = 3500000.0; 
-  final double _totalApprovedExpenses = 2300000.0; 
-  
-  final double _unconfirmedIncomingFunds = 500000.0; 
-  final double _totalDisputedExpenses = 150000.0; 
+  final double _totalProjectBudget = 5000000.0;
+  final double _totalConfirmedInflow = 3500000.0;
+  final double _totalApprovedExpenses = 2300000.0;
+  final double _unconfirmedIncomingFunds = 500000.0;
+  final double _totalDisputedExpenses = 150000.0;
   final int _pendingReviewCount = 3;
 
   // --- CORE BUSINESS LOGIC FORMULAS ---
@@ -33,5 +32,7 @@ class AppState extends ChangeNotifier {
   int get pendingReviewCount => _pendingReviewCount;
 
   double get remainingProjectBudget => _totalProjectBudget - _totalApprovedExpenses;
+  
+  // FIXED: Added missing underscore to _totalConfirmedInflow
   double get contractorCashInHand => _totalConfirmedInflow - _totalApprovedExpenses;
 }

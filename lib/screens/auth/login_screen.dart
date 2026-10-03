@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../widgets/auth/auth_text_field.dart';
+import '../../state/app_state.dart';
+import '../../models/user_role.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,13 +21,17 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Logging in...', style: TextStyle(fontWeight: FontWeight.w600)), 
+          content: Text('Logging in...', style: TextStyle(fontWeight: FontWeight.w600)),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
 
-      const String destination = AppRouter.ownerDashboardRoute;
+      // FIXED: Dynamic routing based on the active role in AppState
+      String destination = AppState().activeRole == UserRole.contractor 
+          ? AppRouter.contractorDashboardRoute 
+          : AppRouter.ownerDashboardRoute;
+
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) Navigator.pushReplacementNamed(context, destination);
       });
