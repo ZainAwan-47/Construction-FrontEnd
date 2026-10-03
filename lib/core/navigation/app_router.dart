@@ -4,12 +4,16 @@ import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/signup_screen.dart';
 import '../../screens/owner/owner_dashboard_screen.dart';
 import '../../screens/contractor/contractor_dashboard_screen.dart';
-import '../../screens/owner/send_funds_screen.dart'; 
+import '../../screens/owner/send_funds_screen.dart';
 import '../../screens/contractor/create_expense_screen.dart';
 import '../../screens/contractor/my_expenses_screen.dart';
-import '../../screens/contractor/adjust_disputed_expense_screen.dart'; // Phase 7
-import '../../screens/owner/review_queue_screen.dart'; 
-import '../../screens/owner/expense_detail_screen.dart'; 
+import '../../screens/contractor/adjust_disputed_expense_screen.dart';
+import '../../screens/owner/review_queue_screen.dart';
+import '../../screens/owner/expense_detail_screen.dart';
+
+// PHASE 8: Updated to point to your widgets folder
+import '../../widgets/common/milestone_tracker_screen.dart'; 
+import '../../widgets/common/milestone_detail_screen.dart'; 
 
 class AppRouter {
   static const String initialRoute = '/splash';
@@ -17,12 +21,14 @@ class AppRouter {
   static const String signupRoute = '/signup';
   static const String ownerDashboardRoute = '/owner_dashboard';
   static const String contractorDashboardRoute = '/contractor_dashboard';
-  static const String sendFundsRoute = '/send_funds'; 
-  static const String createExpenseRoute = '/create_expense'; 
-  static const String myExpensesRoute = '/my_expenses'; 
-  static const String adjustExpenseRoute = '/adjust_expense'; // Phase 7
-  static const String reviewQueueRoute = '/review_queue'; 
-  static const String expenseDetailRoute = '/expense_detail'; 
+  static const String sendFundsRoute = '/send_funds';
+  static const String createExpenseRoute = '/create_expense';
+  static const String myExpensesRoute = '/my_expenses';
+  static const String adjustExpenseRoute = '/adjust_expense';
+  static const String reviewQueueRoute = '/review_queue';
+  static const String expenseDetailRoute = '/expense_detail';
+  static const String milestoneTrackerRoute = '/milestone_tracker'; 
+  static const String milestoneDetailRoute = '/milestone_detail'; 
   static const String placeholderRoute = '/placeholder';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -51,6 +57,11 @@ class AppRouter {
       case expenseDetailRoute:
         final expenseId = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => ExpenseDetailScreen(expenseId: expenseId));
+      case milestoneTrackerRoute:
+        return MaterialPageRoute(builder: (_) => const MilestoneTrackerScreen());
+      case milestoneDetailRoute:
+        final milestoneId = settings.arguments as int;
+        return MaterialPageRoute(builder: (_) => MilestoneDetailScreen(milestoneId: milestoneId));
       case placeholderRoute:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_role.dart';
 import '../models/fund_transfer.dart';
 import '../models/expense.dart';
+import '../models/milestone.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -18,6 +19,74 @@ class AppState extends ChangeNotifier {
 
   final double _totalProjectBudget = 5000000.0;
 
+  // --- PHASE 8: MILESTONE STATE ---
+  final List<Milestone> _milestones = [
+    Milestone(
+      id: 1,
+      title: 'Site Prep & Layout',
+      description: 'Machinery rentals, gravel, termite spray. Plot layout, boundary work, trenching, soil test.',
+      status: MilestoneStatus.inProgress,
+    ),
+    Milestone(
+      id: 2,
+      title: 'Foundation & Base',
+      description: 'Grade-60 Steel, concrete, stone ballast. Footings cast, plinth beam concrete cured.',
+    ),
+    Milestone(
+      id: 3,
+      title: 'Superstructure',
+      description: 'Bricks, cement, sand, scaffolding. Columns raised, brick walls, roof slab cast.',
+    ),
+    Milestone(
+      id: 4,
+      title: 'MEP Rough-Ins',
+      description: 'PVC pipes, conduit, copper cables. Concealed plumbing/wiring pressure-tested.',
+    ),
+    Milestone(
+      id: 5,
+      title: 'Plaster & Flooring',
+      description: 'Plaster sand, tiles, marble, chemical. Screed, plaster curing, tile fixing.',
+    ),
+    Milestone(
+      id: 6,
+      title: 'Finishing & Handover',
+      description: 'Paint, primer, fixtures, woodwork. Final paint coats, fixtures, deep cleaning.',
+    ),
+  ];
+
+  List<Milestone> get allMilestones => List.unmodifiable(_milestones);
+
+  int get completedMilestoneCount =>
+      _milestones.where((m) => m.status == MilestoneStatus.completed).length;
+
+  void markMilestoneReady(int id) {
+    final target = _milestones.firstWhere((m) => m.id == id);
+    if (target.status != MilestoneStatus.inProgress) return;
+    target.status = MilestoneStatus.awaitingSignOff;
+    notifyListeners();
+  }
+
+  void signOffMilestone(int id) {
+    final target = _milestones.firstWhere((m) => m.id == id);
+    if (target.status != MilestoneStatus.inProgress && target.status != MilestoneStatus.awaitingSignOff) return;
+
+    if (id > 1) {
+      final previous = _milestones.firstWhere((m) => m.id == id - 1);
+      if (previous.status != MilestoneStatus.completed) return;
+    }
+
+    target.status = MilestoneStatus.completed;
+    target.completedDate = DateTime.now();
+
+    if (id < 6) {
+      final next = _milestones.firstWhere((m) => m.id == id + 1);
+      next.status = MilestoneStatus.inProgress;
+    }
+
+    notifyListeners();
+  }
+
+  // --- PHASE 5, 6, 7: EXPENSE STATE ---
   final List<Expense> _expenses = [
     Expense(
       id: 'exp_001',
@@ -65,7 +134,7 @@ class AppState extends ChangeNotifier {
 
   void addExpense(String category, double amount, String description, bool receiptAttached) {
     _expenses.insert(
-      0, 
+      0,
       Expense(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         category: category,
@@ -73,7 +142,7 @@ class AppState extends ChangeNotifier {
         description: description,
         receiptAttached: receiptAttached,
         date: DateTime.now(),
-        status: ExpenseStatus.pending, 
+        status: ExpenseStatus.pending,
       ),
     );
     notifyListeners();
@@ -81,37 +150,31 @@ class AppState extends ChangeNotifier {
 
   void approveExpense(String id) {
     final expense = _expenses.firstWhere((e) => e.id == id);
-    if (expense.status != ExpenseStatus.pending) return; 
+    if (expense.status != ExpenseStatus.pending) return;
     expense.status = ExpenseStatus.approved;
     notifyListeners();
   }
 
   void disputeExpense(String id, String feedback) {
     final expense = _expenses.firstWhere((e) => e.id == id);
-    if (expense.status != ExpenseStatus.pending) return; 
-    
+    if (expense.status != ExpenseStatus.pending) return;
     expense.status = ExpenseStatus.disputed;
-    expense.feedbackHistory.add(feedback); // Appends, does not overwrite
+    expense.feedbackHistory.add(feedback);
     notifyListeners();
   }
 
-  // --- PHASE 7: CONTRACTOR ADJUSTMENT ACTION ---
   void resubmitExpense(String id, String category, double amount, String description, bool receiptAttached) {
     final expense = _expenses.firstWhere((e) => e.id == id);
-    
-    // ENFORCEMENT: Only disputed expenses can be resubmitted.
     if (expense.status != ExpenseStatus.disputed) return;
-
-    // Retain ID, mutate fields
     expense.category = category;
     expense.amount = amount;
     expense.description = description;
     expense.receiptAttached = receiptAttached;
-    expense.status = ExpenseStatus.pending; // Returns to pending queue
-    
+    expense.status = ExpenseStatus.pending;
     notifyListeners();
   }
 
+  // --- PHASE 4: FUNDS TRANSFER STATE ---
   final List<FundTransfer> _transfers = [
     FundTransfer(
       id: 'tx_001',
@@ -154,6 +217,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // --- CORE BUSINESS LOGIC FORMULAS ---
   double get totalProjectBudget => _totalProjectBudget;
   double get remainingProjectBudget => _totalProjectBudget - totalApprovedExpenses;
   double get contractorCashInHand => _totalConfirmedInflow - totalApprovedExpenses;

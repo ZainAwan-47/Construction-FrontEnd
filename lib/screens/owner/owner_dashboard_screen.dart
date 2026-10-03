@@ -177,9 +177,10 @@ class OwnerDashboardScreen extends StatelessWidget {
                       title: 'Milestones',
                       subtitle: 'Phase tracking',
                       icon: Icons.analytics_outlined,
+                      // PHASE 8: Wired to MilestoneTracker
                       onTap: () => Navigator.pushNamed(
                         context,
-                        AppRouter.placeholderRoute,
+                        AppRouter.milestoneTrackerRoute,
                       ),
                     ),
                     QuickActionCard(
@@ -204,6 +205,9 @@ class OwnerDashboardScreen extends StatelessWidget {
                 Navigator.pushNamed(context, AppRouter.sendFundsRoute);
               } else if (index == 2) {
                 Navigator.pushNamed(context, AppRouter.reviewQueueRoute);
+              } else if (index == 3) {
+                // PHASE 8: Wired to MilestoneTracker
+                Navigator.pushNamed(context, AppRouter.milestoneTrackerRoute);
               } else if (index != 0) {
                 Navigator.pushNamed(context, AppRouter.placeholderRoute);
               }
