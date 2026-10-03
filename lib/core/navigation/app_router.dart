@@ -4,6 +4,7 @@ import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/signup_screen.dart';
 import '../../screens/owner/owner_dashboard_screen.dart';
 import '../../screens/contractor/contractor_dashboard_screen.dart';
+import '../../screens/owner/send_funds_screen.dart'; // Phase 4
 
 class AppRouter {
   static const String initialRoute = '/splash';
@@ -11,8 +12,7 @@ class AppRouter {
   static const String signupRoute = '/signup';
   static const String ownerDashboardRoute = '/owner_dashboard';
   static const String contractorDashboardRoute = '/contractor_dashboard';
-  
-  // Phase 3 Placeholders for Bottom Nav
+  static const String sendFundsRoute = '/send_funds'; // Phase 4
   static const String placeholderRoute = '/placeholder';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -27,6 +27,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const OwnerDashboardScreen());
       case contractorDashboardRoute:
         return MaterialPageRoute(builder: (_) => const ContractorDashboardScreen());
+      case sendFundsRoute:
+        return MaterialPageRoute(builder: (_) => const SendFundsScreen());
       case placeholderRoute:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

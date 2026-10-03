@@ -9,7 +9,6 @@ import '../../widgets/navigation/role_bottom_nav.dart';
 class ContractorDashboardScreen extends StatelessWidget {
   const ContractorDashboardScreen({Key? key}) : super(key: key);
 
-  // Native Dart currency formatter without requiring 'intl' package
   String _formatCurrency(double value) {
     String result = value.toInt().toString();
     RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
@@ -19,7 +18,6 @@ class ContractorDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Native local state access
     final state = AppState();
 
     return Scaffold(
@@ -42,7 +40,7 @@ class ContractorDashboardScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(20.0),
           children: [
-            if (state.unconfirmedIncomingFunds > 0)
+            if (state.pendingTransfers.isNotEmpty)
               Container(
                 margin: const EdgeInsets.only(bottom: 24),
                 padding: const EdgeInsets.all(20),
@@ -66,8 +64,13 @@ class ContractorDashboardScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      _formatCurrency(state.unconfirmedIncomingFunds),
+                      _formatCurrency(state.pendingTransfers.first.amount),
                       style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: AppColors.primaryBlue, letterSpacing: -1.0),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Ref: ${state.pendingTransfers.first.reference}',
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                     ),
                     const SizedBox(height: 4),
                     const Text('Awaiting your confirmation to enter Cash-in-Hand.', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
@@ -75,7 +78,16 @@ class ContractorDashboardScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () => Navigator.pushNamed(context, AppRouter.placeholderRoute),
+                        onPressed: () {
+                          state.confirmTransfer(state.pendingTransfers.first.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Funds confirmed. Cash-in-Hand updated.'),
+                              backgroundColor: AppColors.success,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
                         child: const Text('Confirm Receipt'),
                       ),
                     ),

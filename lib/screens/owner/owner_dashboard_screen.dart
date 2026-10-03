@@ -11,7 +11,6 @@ class OwnerDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Native local state access
     final state = AppState();
 
     return Scaffold(
@@ -112,7 +111,7 @@ class OwnerDashboardScreen extends StatelessWidget {
                   subtitle: 'Top up contractor',
                   icon: Icons.send_rounded,
                   isPrimary: true,
-                  onTap: () => Navigator.pushNamed(context, AppRouter.placeholderRoute),
+                  onTap: () => Navigator.pushNamed(context, AppRouter.sendFundsRoute),
                 ),
                 QuickActionCard(
                   title: 'Review Queue',
