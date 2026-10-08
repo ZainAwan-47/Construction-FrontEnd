@@ -43,7 +43,10 @@ class OwnerDashboardScreen extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.account_circle_outlined),
-                onPressed: () {},
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  AppRouter.settingsRoute,
+                ),
               ),
               const SizedBox(width: 8),
             ],
@@ -208,6 +211,8 @@ class OwnerDashboardScreen extends StatelessWidget {
               } else if (index == 3) {
                 // PHASE 8: Wired to MilestoneTracker
                 Navigator.pushNamed(context, AppRouter.milestoneTrackerRoute);
+              } else if (index == 4) {
+                Navigator.pushNamed(context, AppRouter.settingsRoute);
               } else if (index != 0) {
                 Navigator.pushNamed(context, AppRouter.placeholderRoute);
               }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../state/app_state.dart';
@@ -10,10 +11,7 @@ class ContractorDashboardScreen extends StatelessWidget {
   const ContractorDashboardScreen({Key? key}) : super(key: key);
 
   String _formatCurrency(double value) {
-    String result = value.toInt().toString();
-    RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    String mathFunc(Match match) => '${match[1]},';
-    return 'PKR ${result.replaceAllMapped(reg, mathFunc)}';
+    return formatPkrCurrency(value);
   }
 
   @override
@@ -123,7 +121,19 @@ class ContractorDashboardScreen extends StatelessWidget {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              state.confirmTransfer(state.pendingTransfers.first.id);
+                              final confirmed = state.confirmTransfer(
+                                state.pendingTransfers.first.id,
+                              );
+                              if (!confirmed) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Transfer was not confirmed. Check its status and active role.'),
+                                    backgroundColor: AppColors.error,
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                                return;
+                              }
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Funds confirmed. Cash-in-Hand updated.'),

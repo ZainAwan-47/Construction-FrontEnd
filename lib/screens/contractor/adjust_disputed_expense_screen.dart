@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../state/app_state.dart';
 import '../../models/expense.dart';
@@ -36,7 +37,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
     final index = expenses.indexWhere((e) => e.id == widget.expenseId);
     if (index != -1) {
       final expense = expenses[index];
-      _amountController = TextEditingController(text: expense.amount.toInt().toString());
+      _amountController = TextEditingController(text: expense.amount.toString());
       _descriptionController = TextEditingController(text: expense.description);
       _selectedCategory = expense.category;
       _receiptAttached = expense.receiptAttached;
@@ -60,17 +61,29 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
   void _resubmitExpense() {
     setState(() => _attemptedSubmit = true);
     if (_formKey.currentState!.validate() && _receiptAttached && _selectedCategory != null) {
-      final amount = double.parse(_amountController.text.replaceAll(',', ''));
-      AppState().resubmitExpense(
+      final amount = parsePositivePkrAmount(_amountController.text);
+      if (amount == null) return;
+
+      final resubmitted = AppState().resubmitExpense(
         widget.expenseId,
         _selectedCategory!,
         amount,
         _descriptionController.text.trim(),
         _receiptAttached,
       );
+      if (!resubmitted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Expense was not resubmitted. Check its status and active role.'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Expense resubmitted to Owner Queue.'),
+          content: Text('Mock expense resubmitted to Owner Queue.'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
@@ -213,8 +226,9 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Please enter an amount';
-                    final parsed = double.tryParse(value.replaceAll(',', ''));
-                    if (parsed == null || parsed <= 0) return 'Enter a valid amount greater than 0';
+                    if (parsePositivePkrAmount(value) == null) {
+                      return 'Enter a valid amount greater than 0';
+                    }
                     return null;
                   },
                 ),
@@ -238,7 +252,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'Receipt (Mandatory)',
+                  'Receipt (Demo Attachment Required)',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
                 ),
                 const SizedBox(height: 12),
@@ -268,7 +282,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _receiptAttached ? 'Receipt_Attached.jpg' : 'No receipt attached',
+                        _receiptAttached ? 'Demo receipt attached' : 'No demo receipt attached',
                         style: TextStyle(
                           color: _receiptAttached ? AppColors.success : AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
@@ -279,7 +293,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                         ElevatedButton.icon(
                           onPressed: _mockAttachReceipt,
                           icon: const Icon(Icons.camera_alt_outlined),
-                          label: const Text('Update Receipt'),
+                          label: const Text('Update Demo Receipt'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
                             minimumSize: const Size(200, 44),
@@ -292,7 +306,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0, left: 12.0),
                     child: Text(
-                      'A receipt is mandatory for all expenses',
+                      'A demo receipt attachment is required',
                       style: TextStyle(color: AppColors.error, fontSize: 12),
                     ),
                   ),

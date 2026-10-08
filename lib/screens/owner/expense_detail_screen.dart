@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../state/app_state.dart';
 import '../../models/expense.dart';
@@ -16,14 +17,20 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
   final _feedbackController = TextEditingController();
 
   String _formatCurrency(double value) {
-    String result = value.toInt().toString();
-    RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    String mathFunc(Match match) => '${match[1]},';
-    return 'PKR ${result.replaceAllMapped(reg, mathFunc)}';
+    return formatPkrCurrency(value);
   }
 
   void _approveExpense(Expense expense) {
-    AppState().approveExpense(expense.id);
+    if (!AppState().approveExpense(expense.id)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Expense was not approved. Check its status and active role.'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Expense Approved. Financials updated.'),
@@ -46,7 +53,16 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
       return;
     }
     
-    AppState().disputeExpense(expense.id, _feedbackController.text.trim());
+    if (!AppState().disputeExpense(expense.id, _feedbackController.text.trim())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Expense was not disputed. Check its status and active role.'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Expense Disputed. Returned to contractor.'),
@@ -160,7 +176,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                   const SizedBox(height: 24),
 
                   // Receipt Mock
-                  const Text('Attached Receipt', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                  const Text('Attached Demo Receipt', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
                   const SizedBox(height: 12),
                   Container(
                     width: double.infinity,
@@ -179,7 +195,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          expense.receiptAttached ? 'Receipt_Document.jpg' : 'No receipt attached',
+                          expense.receiptAttached ? 'Demo receipt attached' : 'No demo receipt attached',
                           style: TextStyle(
                             color: expense.receiptAttached ? AppColors.primaryBlue : AppColors.hint,
                             fontWeight: FontWeight.w600,

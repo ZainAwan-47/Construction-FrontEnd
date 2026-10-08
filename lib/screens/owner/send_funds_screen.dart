@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../state/app_state.dart';
 
@@ -28,24 +29,35 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
     });
 
     if (_formKey.currentState!.validate() && _proofAttached) {
-      final amount = double.parse(_amountController.text.replaceAll(',', ''));
-      
-      AppState().addTransfer(
-        amount, 
-        _referenceController.text.isEmpty ? 'Fund Transfer' : _referenceController.text, 
-        _proofAttached
+      final amount = parsePositivePkrAmount(_amountController.text);
+      if (amount == null) return;
+
+      final added = AppState().addTransfer(
+        amount,
+        _referenceController.text.isEmpty ? 'Fund Transfer' : _referenceController.text,
+        _proofAttached,
       );
+      if (!added) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Transfer was not recorded. Check the amount and active role.'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Funds sent. Awaiting contractor confirmation.'),
+          content: Text('Mock transfer recorded. Awaiting contractor confirmation.'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
       Navigator.pop(context);
-    }
-  }
+      }
+      }
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +89,9 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Please enter an amount';
-                    final parsed = double.tryParse(value.replaceAll(',', ''));
-                    if (parsed == null || parsed <= 0) return 'Enter a valid amount greater than 0';
+                    if (parsePositivePkrAmount(value) == null) {
+                      return 'Enter a valid amount greater than 0';
+                    }
                     return null;
                   },
                 ),
@@ -96,7 +109,7 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                const Text('Payment Proof (Mandatory)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                const Text('Payment Proof (Demo Attachment Required)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
@@ -118,7 +131,7 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _proofAttached ? 'Bank_Receipt_Attached.jpg' : 'No proof attached',
+                        _proofAttached ? 'Demo proof attached' : 'No demo proof attached',
                         style: TextStyle(
                           color: _proofAttached ? AppColors.success : AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
@@ -129,7 +142,7 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
                         ElevatedButton.icon(
                           onPressed: _mockAttachProof,
                           icon: const Icon(Icons.camera_alt_outlined),
-                          label: const Text('Attach Proof'),
+                          label: const Text('Attach Demo Proof'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
                             minimumSize: const Size(200, 44),
@@ -141,7 +154,7 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
                 if (_attemptedSubmit && !_proofAttached)
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0, left: 12.0),
-                    child: Text('Payment proof is required', style: TextStyle(color: AppColors.error, fontSize: 12)),
+                    child: Text('A demo proof attachment is required', style: TextStyle(color: AppColors.error, fontSize: 12)),
                   ),
                 const SizedBox(height: 32),
 

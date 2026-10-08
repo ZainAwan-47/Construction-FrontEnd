@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../state/app_state.dart';
 
@@ -40,25 +41,36 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
     });
 
     if (_formKey.currentState!.validate() && _receiptAttached && _selectedCategory != null) {
-      final amount = double.parse(_amountController.text.replaceAll(',', ''));
-      
-      AppState().addExpense(
-        _selectedCategory!, 
-        amount, 
-        _descriptionController.text, 
-        _receiptAttached
+      final amount = parsePositivePkrAmount(_amountController.text);
+      if (amount == null) return;
+
+      final added = AppState().addExpense(
+        _selectedCategory!,
+        amount,
+        _descriptionController.text,
+        _receiptAttached,
       );
+      if (!added) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Expense was not submitted. Check the amount and active role.'),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Expense submitted for review.'),
+          content: Text('Mock expense submitted for review.'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
       Navigator.pop(context); // Returns to Dashboard
-    }
-  }
+      }
+      }
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +119,9 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) return 'Please enter an amount';
-                    final parsed = double.tryParse(value.replaceAll(',', ''));
-                    if (parsed == null || parsed <= 0) return 'Enter a valid amount greater than 0';
+                    if (parsePositivePkrAmount(value) == null) {
+                      return 'Enter a valid amount greater than 0';
+                    }
                     return null;
                   },
                 ),
@@ -133,8 +146,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Mandatory Receipt Mock
-                const Text('Receipt (Mandatory)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                const Text('Receipt (Demo Attachment Required)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
@@ -156,7 +168,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _receiptAttached ? 'Receipt_Captured.jpg' : 'No receipt attached',
+                        _receiptAttached ? 'Demo receipt attached' : 'No demo receipt attached',
                         style: TextStyle(
                           color: _receiptAttached ? AppColors.success : AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
@@ -167,7 +179,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                         ElevatedButton.icon(
                           onPressed: _mockAttachReceipt,
                           icon: const Icon(Icons.camera_alt_outlined),
-                          label: const Text('Attach Receipt'),
+                          label: const Text('Attach Demo Receipt'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
                             minimumSize: const Size(200, 44),
@@ -179,7 +191,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                 if (_attemptedSubmit && !_receiptAttached)
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0, left: 12.0),
-                    child: Text('A receipt is mandatory for all expenses', style: TextStyle(color: AppColors.error, fontSize: 12)),
+                    child: Text('A demo receipt attachment is required', style: TextStyle(color: AppColors.error, fontSize: 12)),
                   ),
                 const SizedBox(height: 32),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../state/app_state.dart';
@@ -8,10 +9,7 @@ class ReviewQueueScreen extends StatelessWidget {
   const ReviewQueueScreen({Key? key}) : super(key: key);
 
   String _formatCurrency(double value) {
-    String result = value.toInt().toString();
-    RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    String mathFunc(Match match) => '${match[1]},';
-    return 'PKR ${result.replaceAllMapped(reg, mathFunc)}';
+    return formatPkrCurrency(value);
   }
 
   Widget _buildStatusBadge(ExpenseStatus status) {

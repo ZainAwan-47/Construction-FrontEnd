@@ -25,7 +25,6 @@ class MilestoneDetailScreen extends StatelessWidget {
           ),
         );
 
-        final isLocked = milestone.status == MilestoneStatus.locked;
         final isComplete = milestone.status == MilestoneStatus.completed;
         final isAwaitingSignOff = milestone.status == MilestoneStatus.awaitingSignOff;
         final inProgress = milestone.status == MilestoneStatus.inProgress;
@@ -167,7 +166,16 @@ class MilestoneDetailScreen extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            state.signOffMilestone(milestoneId);
+                            if (!state.signOffMilestone(milestoneId)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Milestone was not signed off. Check its status and active role.'),
+                                  backgroundColor: AppColors.error,
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                              return;
+                            }
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Milestone signed off. Next phase unlocked.'),
@@ -251,7 +259,16 @@ class MilestoneDetailScreen extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            state.markMilestoneReady(milestoneId);
+                            if (!state.markMilestoneReady(milestoneId)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Milestone was not marked ready. Check its status and active role.'),
+                                  backgroundColor: AppColors.error,
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                              return;
+                            }
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Milestone marked ready for Owner sign-off.'),

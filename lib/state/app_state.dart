@@ -63,36 +63,37 @@ class AppState extends ChangeNotifier {
   int get completedMilestoneCount =>
       _milestones.where((m) => m.status == MilestoneStatus.completed).length;
 
-  void markMilestoneReady(int id) {
+  bool markMilestoneReady(int id) {
     // Role check: Contractor only
-    if (_activeRole == UserRole.owner) return;
+    if (_activeRole == UserRole.owner) return false;
 
     final index = _milestones.indexWhere((m) => m.id == id);
-    if (index == -1) return;
+    if (index == -1) return false;
 
     final target = _milestones[index];
-    if (target.status != MilestoneStatus.inProgress) return;
+    if (target.status != MilestoneStatus.inProgress) return false;
 
     target.status = MilestoneStatus.awaitingSignOff;
     notifyListeners();
+    return true;
   }
 
-  void signOffMilestone(int id) {
+  bool signOffMilestone(int id) {
     // Role check: Owner only
-    if (_activeRole == UserRole.contractor) return;
+    if (_activeRole == UserRole.contractor) return false;
 
     final index = _milestones.indexWhere((m) => m.id == id);
-    if (index == -1) return;
+    if (index == -1) return false;
 
     final target = _milestones[index];
     // Enforce: Owner sign-off permitted ONLY when awaitingSignOff
-    if (target.status != MilestoneStatus.awaitingSignOff) return;
+    if (target.status != MilestoneStatus.awaitingSignOff) return false;
 
     // Sequential enforcement
     if (id > 1) {
       final prevIndex = _milestones.indexWhere((m) => m.id == id - 1);
       if (prevIndex == -1 || _milestones[prevIndex].status != MilestoneStatus.completed) {
-        return;
+        return false;
       }
     }
 
@@ -107,6 +108,7 @@ class AppState extends ChangeNotifier {
       }
     }
     notifyListeners();
+    return true;
   }
 
   // --- PHASE 5, 6, 7: EXPENSE STATE ---
@@ -154,10 +156,12 @@ class AppState extends ChangeNotifier {
   int get pendingReviewCount =>
       _expenses.where((e) => e.status == ExpenseStatus.pending).length;
 
-  void addExpense(String category, double amount, String description, bool receiptAttached) {
+  bool addExpense(String category, double amount, String description, bool receiptAttached) {
     // Role check: Contractor only
-    if (_activeRole == UserRole.owner) return;
-    if (amount <= 0 || !receiptAttached || category.trim().isEmpty) return;
+    if (_activeRole == UserRole.owner) return false;
+    if (!amount.isFinite || amount <= 0 || !receiptAttached || category.trim().isEmpty) {
+      return false;
+    }
 
     _expenses.insert(
       0,
@@ -172,49 +176,54 @@ class AppState extends ChangeNotifier {
       ),
     );
     notifyListeners();
+    return true;
   }
 
-  void approveExpense(String id) {
+  bool approveExpense(String id) {
     // Role check: Owner only
-    if (_activeRole == UserRole.contractor) return;
+    if (_activeRole == UserRole.contractor) return false;
 
     final index = _expenses.indexWhere((e) => e.id == id);
-    if (index == -1) return;
+    if (index == -1) return false;
 
     final expense = _expenses[index];
-    if (expense.status != ExpenseStatus.pending) return;
+    if (expense.status != ExpenseStatus.pending) return false;
 
     expense.status = ExpenseStatus.approved;
     notifyListeners();
+    return true;
   }
 
-  void disputeExpense(String id, String feedback) {
+  bool disputeExpense(String id, String feedback) {
     // Role check: Owner only
-    if (_activeRole == UserRole.contractor) return;
-    if (feedback.trim().isEmpty) return;
+    if (_activeRole == UserRole.contractor) return false;
+    if (feedback.trim().isEmpty) return false;
 
     final index = _expenses.indexWhere((e) => e.id == id);
-    if (index == -1) return;
+    if (index == -1) return false;
 
     final expense = _expenses[index];
-    if (expense.status != ExpenseStatus.pending) return;
+    if (expense.status != ExpenseStatus.pending) return false;
 
     expense.status = ExpenseStatus.disputed;
     expense.feedbackHistory.add(feedback.trim());
     notifyListeners();
+    return true;
   }
 
-  void resubmitExpense(String id, String category, double amount, String description, bool receiptAttached) {
+  bool resubmitExpense(String id, String category, double amount, String description, bool receiptAttached) {
     // Role check: Contractor only
-    if (_activeRole == UserRole.owner) return;
-    if (amount <= 0 || !receiptAttached || category.trim().isEmpty) return;
+    if (_activeRole == UserRole.owner) return false;
+    if (!amount.isFinite || amount <= 0 || !receiptAttached || category.trim().isEmpty) {
+      return false;
+    }
 
     final index = _expenses.indexWhere((e) => e.id == id);
-    if (index == -1) return;
+    if (index == -1) return false;
 
     final expense = _expenses[index];
     // Enforce: Only Disputed expenses can be adjusted and resubmitted
-    if (expense.status != ExpenseStatus.disputed) return;
+    if (expense.status != ExpenseStatus.disputed) return false;
 
     expense.category = category;
     expense.amount = amount;
@@ -222,6 +231,7 @@ class AppState extends ChangeNotifier {
     expense.receiptAttached = receiptAttached;
     expense.status = ExpenseStatus.pending;
     notifyListeners();
+    return true;
   }
 
   // --- PHASE 4: FUNDS TRANSFER STATE ---
@@ -247,10 +257,10 @@ class AppState extends ChangeNotifier {
       .where((t) => t.status == TransferStatus.awaitingConfirmation)
       .fold(0.0, (sum, t) => sum + t.amount);
 
-  void addTransfer(double amount, String reference, bool proofAttached) {
+  bool addTransfer(double amount, String reference, bool proofAttached) {
     // Role check: Owner only
-    if (_activeRole == UserRole.contractor) return;
-    if (amount <= 0 || !proofAttached) return;
+    if (_activeRole == UserRole.contractor) return false;
+    if (!amount.isFinite || amount <= 0 || !proofAttached) return false;
 
     _transfers.add(
       FundTransfer(
@@ -263,21 +273,23 @@ class AppState extends ChangeNotifier {
       ),
     );
     notifyListeners();
+    return true;
   }
 
-  void confirmTransfer(String id) {
+  bool confirmTransfer(String id) {
     // Role check: Contractor only
-    if (_activeRole == UserRole.owner) return;
+    if (_activeRole == UserRole.owner) return false;
 
     final index = _transfers.indexWhere((t) => t.id == id);
-    if (index == -1) return;
+    if (index == -1) return false;
 
     final transfer = _transfers[index];
     // Enforce: Only transfers awaiting confirmation can be confirmed
-    if (transfer.status != TransferStatus.awaitingConfirmation) return;
+    if (transfer.status != TransferStatus.awaitingConfirmation) return false;
 
     transfer.status = TransferStatus.confirmed;
     notifyListeners();
+    return true;
   }
 
   // --- CORE BUSINESS LOGIC FORMULAS ---

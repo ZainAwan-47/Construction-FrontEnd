@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 
 class MetricCard extends StatelessWidget {
@@ -19,10 +20,7 @@ class MetricCard extends StatelessWidget {
 
   // Native Dart currency formatter without requiring 'intl' package
   String _formatCurrency(double value) {
-    String result = value.toInt().toString();
-    RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    String mathFunc(Match match) => '${match[1]},';
-    return 'PKR ${result.replaceAllMapped(reg, mathFunc)}';
+    return formatPkrCurrency(value);
   }
 
   @override
