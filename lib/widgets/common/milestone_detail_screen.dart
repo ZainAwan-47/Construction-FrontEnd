@@ -6,7 +6,6 @@ import '../../models/milestone.dart';
 
 class MilestoneDetailScreen extends StatelessWidget {
   final int milestoneId;
-
   const MilestoneDetailScreen({Key? key, required this.milestoneId}) : super(key: key);
 
   @override
@@ -15,8 +14,16 @@ class MilestoneDetailScreen extends StatelessWidget {
       animation: AppState(),
       builder: (context, _) {
         final state = AppState();
-        final isOwner = state.activeRole == UserRole.owner || state.activeRole == UserRole.both;
-        final milestone = state.allMilestones.firstWhere((m) => m.id == milestoneId);
+        final isOwner = state.activeRole == UserRole.owner;
+        final milestone = state.allMilestones.firstWhere(
+          (m) => m.id == milestoneId,
+          orElse: () => Milestone(
+            id: 0,
+            title: 'Not Found',
+            description: '',
+            status: MilestoneStatus.locked,
+          ),
+        );
 
         final isLocked = milestone.status == MilestoneStatus.locked;
         final isComplete = milestone.status == MilestoneStatus.completed;
@@ -154,9 +161,8 @@ class MilestoneDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-
                   if (isOwner) ...[
-                    if (isAwaitingSignOff || inProgress)
+                    if (isAwaitingSignOff)
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
@@ -173,6 +179,32 @@ class MilestoneDetailScreen extends StatelessWidget {
                           icon: const Icon(Icons.verified_outlined),
                           label: const Text('Owner Sign-Off & Complete Phase'),
                           style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
+                        ),
+                      )
+                    else if (inProgress)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryOrange.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.primaryOrange.withOpacity(0.4)),
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.info_outline, color: AppColors.primaryOrange, size: 20),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'In progress by contractor. Can be signed off once marked ready.',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       )
                     else if (isComplete)

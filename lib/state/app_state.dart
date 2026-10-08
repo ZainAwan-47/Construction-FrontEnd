@@ -31,58 +31,81 @@ class AppState extends ChangeNotifier {
       id: 2,
       title: 'Foundation & Base',
       description: 'Grade-60 Steel, concrete, stone ballast. Footings cast, plinth beam concrete cured.',
+      status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 3,
       title: 'Superstructure',
       description: 'Bricks, cement, sand, scaffolding. Columns raised, brick walls, roof slab cast.',
+      status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 4,
       title: 'MEP Rough-Ins',
       description: 'PVC pipes, conduit, copper cables. Concealed plumbing/wiring pressure-tested.',
+      status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 5,
       title: 'Plaster & Flooring',
       description: 'Plaster sand, tiles, marble, chemical. Screed, plaster curing, tile fixing.',
+      status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 6,
       title: 'Finishing & Handover',
       description: 'Paint, primer, fixtures, woodwork. Final paint coats, fixtures, deep cleaning.',
+      status: MilestoneStatus.locked,
     ),
   ];
 
   List<Milestone> get allMilestones => List.unmodifiable(_milestones);
-
   int get completedMilestoneCount =>
       _milestones.where((m) => m.status == MilestoneStatus.completed).length;
 
   void markMilestoneReady(int id) {
-    final target = _milestones.firstWhere((m) => m.id == id);
+    // Role check: Contractor only
+    if (_activeRole == UserRole.owner) return;
+
+    final index = _milestones.indexWhere((m) => m.id == id);
+    if (index == -1) return;
+
+    final target = _milestones[index];
     if (target.status != MilestoneStatus.inProgress) return;
+
     target.status = MilestoneStatus.awaitingSignOff;
     notifyListeners();
   }
 
   void signOffMilestone(int id) {
-    final target = _milestones.firstWhere((m) => m.id == id);
-    if (target.status != MilestoneStatus.inProgress && target.status != MilestoneStatus.awaitingSignOff) return;
+    // Role check: Owner only
+    if (_activeRole == UserRole.contractor) return;
 
+    final index = _milestones.indexWhere((m) => m.id == id);
+    if (index == -1) return;
+
+    final target = _milestones[index];
+    // Enforce: Owner sign-off permitted ONLY when awaitingSignOff
+    if (target.status != MilestoneStatus.awaitingSignOff) return;
+
+    // Sequential enforcement
     if (id > 1) {
-      final previous = _milestones.firstWhere((m) => m.id == id - 1);
-      if (previous.status != MilestoneStatus.completed) return;
+      final prevIndex = _milestones.indexWhere((m) => m.id == id - 1);
+      if (prevIndex == -1 || _milestones[prevIndex].status != MilestoneStatus.completed) {
+        return;
+      }
     }
 
     target.status = MilestoneStatus.completed;
     target.completedDate = DateTime.now();
 
+    // Unlock next milestone sequentially
     if (id < 6) {
-      final next = _milestones.firstWhere((m) => m.id == id + 1);
-      next.status = MilestoneStatus.inProgress;
+      final nextIndex = _milestones.indexWhere((m) => m.id == id + 1);
+      if (nextIndex != -1 && _milestones[nextIndex].status == MilestoneStatus.locked) {
+        _milestones[nextIndex].status = MilestoneStatus.inProgress;
+      }
     }
-
     notifyListeners();
   }
 
@@ -128,11 +151,14 @@ class AppState extends ChangeNotifier {
       .where((e) => e.status == ExpenseStatus.disputed)
       .fold(0.0, (sum, e) => sum + e.amount);
 
-  int get pendingReviewCount => _expenses
-      .where((e) => e.status == ExpenseStatus.pending)
-      .length;
+  int get pendingReviewCount =>
+      _expenses.where((e) => e.status == ExpenseStatus.pending).length;
 
   void addExpense(String category, double amount, String description, bool receiptAttached) {
+    // Role check: Contractor only
+    if (_activeRole == UserRole.owner) return;
+    if (amount <= 0 || !receiptAttached || category.trim().isEmpty) return;
+
     _expenses.insert(
       0,
       Expense(
@@ -149,23 +175,47 @@ class AppState extends ChangeNotifier {
   }
 
   void approveExpense(String id) {
-    final expense = _expenses.firstWhere((e) => e.id == id);
+    // Role check: Owner only
+    if (_activeRole == UserRole.contractor) return;
+
+    final index = _expenses.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+
+    final expense = _expenses[index];
     if (expense.status != ExpenseStatus.pending) return;
+
     expense.status = ExpenseStatus.approved;
     notifyListeners();
   }
 
   void disputeExpense(String id, String feedback) {
-    final expense = _expenses.firstWhere((e) => e.id == id);
+    // Role check: Owner only
+    if (_activeRole == UserRole.contractor) return;
+    if (feedback.trim().isEmpty) return;
+
+    final index = _expenses.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+
+    final expense = _expenses[index];
     if (expense.status != ExpenseStatus.pending) return;
+
     expense.status = ExpenseStatus.disputed;
-    expense.feedbackHistory.add(feedback);
+    expense.feedbackHistory.add(feedback.trim());
     notifyListeners();
   }
 
   void resubmitExpense(String id, String category, double amount, String description, bool receiptAttached) {
-    final expense = _expenses.firstWhere((e) => e.id == id);
+    // Role check: Contractor only
+    if (_activeRole == UserRole.owner) return;
+    if (amount <= 0 || !receiptAttached || category.trim().isEmpty) return;
+
+    final index = _expenses.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+
+    final expense = _expenses[index];
+    // Enforce: Only Disputed expenses can be adjusted and resubmitted
     if (expense.status != ExpenseStatus.disputed) return;
+
     expense.category = category;
     expense.amount = amount;
     expense.description = description;
@@ -198,6 +248,10 @@ class AppState extends ChangeNotifier {
       .fold(0.0, (sum, t) => sum + t.amount);
 
   void addTransfer(double amount, String reference, bool proofAttached) {
+    // Role check: Owner only
+    if (_activeRole == UserRole.contractor) return;
+    if (amount <= 0 || !proofAttached) return;
+
     _transfers.add(
       FundTransfer(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -212,7 +266,16 @@ class AppState extends ChangeNotifier {
   }
 
   void confirmTransfer(String id) {
-    final transfer = _transfers.firstWhere((t) => t.id == id);
+    // Role check: Contractor only
+    if (_activeRole == UserRole.owner) return;
+
+    final index = _transfers.indexWhere((t) => t.id == id);
+    if (index == -1) return;
+
+    final transfer = _transfers[index];
+    // Enforce: Only transfers awaiting confirmation can be confirmed
+    if (transfer.status != TransferStatus.awaitingConfirmation) return;
+
     transfer.status = TransferStatus.confirmed;
     notifyListeners();
   }

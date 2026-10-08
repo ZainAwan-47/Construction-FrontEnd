@@ -10,10 +10,9 @@ import '../../screens/contractor/my_expenses_screen.dart';
 import '../../screens/contractor/adjust_disputed_expense_screen.dart';
 import '../../screens/owner/review_queue_screen.dart';
 import '../../screens/owner/expense_detail_screen.dart';
-
-// PHASE 8: Updated to point to your widgets folder
-import '../../widgets/common/milestone_tracker_screen.dart'; 
-import '../../widgets/common/milestone_detail_screen.dart'; 
+import '../../widgets/common/milestone_tracker_screen.dart';
+import '../../widgets/common/milestone_detail_screen.dart';
+import '../../screens/common/settings_screen.dart';
 
 class AppRouter {
   static const String initialRoute = '/splash';
@@ -27,8 +26,9 @@ class AppRouter {
   static const String adjustExpenseRoute = '/adjust_expense';
   static const String reviewQueueRoute = '/review_queue';
   static const String expenseDetailRoute = '/expense_detail';
-  static const String milestoneTrackerRoute = '/milestone_tracker'; 
-  static const String milestoneDetailRoute = '/milestone_detail'; 
+  static const String milestoneTrackerRoute = '/milestone_tracker';
+  static const String milestoneDetailRoute = '/milestone_detail';
+  static const String settingsRoute = '/settings';
   static const String placeholderRoute = '/placeholder';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -51,29 +51,41 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const MyExpensesScreen());
       case adjustExpenseRoute:
         final expenseId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => AdjustDisputedExpenseScreen(expenseId: expenseId));
+        return MaterialPageRoute(
+          builder: (_) => AdjustDisputedExpenseScreen(expenseId: expenseId),
+        );
       case reviewQueueRoute:
         return MaterialPageRoute(builder: (_) => const ReviewQueueScreen());
       case expenseDetailRoute:
         final expenseId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) => ExpenseDetailScreen(expenseId: expenseId));
+        return MaterialPageRoute(
+          builder: (_) => ExpenseDetailScreen(expenseId: expenseId),
+        );
       case milestoneTrackerRoute:
         return MaterialPageRoute(builder: (_) => const MilestoneTrackerScreen());
       case milestoneDetailRoute:
         final milestoneId = settings.arguments as int;
-        return MaterialPageRoute(builder: (_) => MilestoneDetailScreen(milestoneId: milestoneId));
+        return MaterialPageRoute(
+          builder: (_) => MilestoneDetailScreen(milestoneId: milestoneId),
+        );
+      case settingsRoute:
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
       case placeholderRoute:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
             appBar: AppBar(title: const Text('Feature Pending')),
-            body: const Center(child: Text('This feature belongs to a later phase.')),
+            body: const Center(
+              child: Text('This feature belongs to a later phase.'),
+            ),
           ),
         );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
             appBar: AppBar(title: const Text('Error')),
-            body: Center(child: Text('No route defined for ${settings.name}')),
+            body: Center(
+              child: Text('No route defined for ${settings.name}'),
+            ),
           ),
         );
     }
