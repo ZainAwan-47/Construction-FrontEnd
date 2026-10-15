@@ -8,7 +8,7 @@ import '../../widgets/dashboard/quick_action_card.dart';
 import '../../widgets/navigation/role_bottom_nav.dart';
 
 class ContractorDashboardScreen extends StatelessWidget {
-  const ContractorDashboardScreen({Key? key}) : super(key: key);
+  const ContractorDashboardScreen({super.key});
 
   String _formatCurrency(double value) {
     return formatPkrCurrency(value);
@@ -65,11 +65,11 @@ class ContractorDashboardScreen extends StatelessWidget {
                       color: AppColors.surfaceWhite,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primaryBlue.withOpacity(0.2),
+                        color: AppColors.primaryBlue.withValues(alpha: 0.2),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primaryBlue.withOpacity(0.1),
+                          color: AppColors.primaryBlue.withValues(alpha: 0.1),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),

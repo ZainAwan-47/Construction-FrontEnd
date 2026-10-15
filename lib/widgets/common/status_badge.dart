@@ -8,10 +8,10 @@ class StatusBadge extends StatelessWidget {
   final String text;
 
   const StatusBadge({
-    Key? key,
+    super.key,
     required this.status,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -9,13 +9,13 @@ class QuickActionCard extends StatelessWidget {
   final bool isPrimary;
 
   const QuickActionCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.onTap,
     this.isPrimary = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class QuickActionCard extends StatelessWidget {
       color: isPrimary ? AppColors.primaryBlue : AppColors.surfaceWhite,
       borderRadius: BorderRadius.circular(16),
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withValues(alpha: 0.1),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),

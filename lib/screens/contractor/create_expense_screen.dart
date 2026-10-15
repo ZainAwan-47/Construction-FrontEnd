@@ -4,7 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../state/app_state.dart';
 
 class CreateExpenseScreen extends StatefulWidget {
-  const CreateExpenseScreen({Key? key}) : super(key: key);
+  const CreateExpenseScreen({super.key});
 
   @override
   State<CreateExpenseScreen> createState() => _CreateExpenseScreenState();
@@ -92,7 +92,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                 
                 // Category Dropdown
                 DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   decoration: InputDecoration(
                     labelText: 'Category',
                     filled: true,
@@ -152,7 +152,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: _receiptAttached ? AppColors.success.withOpacity(0.05) : AppColors.surfaceWhite,
+                    color: _receiptAttached ? AppColors.success.withValues(alpha: 0.05) : AppColors.surfaceWhite,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _receiptAttached ? AppColors.success : (_attemptedSubmit && !_receiptAttached ? AppColors.error : Colors.grey.shade300),

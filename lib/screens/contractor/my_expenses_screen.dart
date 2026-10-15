@@ -6,7 +6,7 @@ import '../../state/app_state.dart';
 import '../../models/expense.dart';
 
 class MyExpensesScreen extends StatelessWidget {
-  const MyExpensesScreen({Key? key}) : super(key: key);
+  const MyExpensesScreen({super.key});
 
   String _formatCurrency(double value) {
     return formatPkrCurrency(value);
@@ -110,9 +110,9 @@ class MyExpensesScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.error.withOpacity(0.05),
+                              color: AppColors.error.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                              border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

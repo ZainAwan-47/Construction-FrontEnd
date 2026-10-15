@@ -5,7 +5,7 @@ import '../../state/app_state.dart';
 import '../../models/user_role.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   void _switchRoleAndNavigate(BuildContext context, UserRole newRole) {
     AppState().switchRole(newRole);
@@ -25,9 +25,7 @@ class SettingsScreen extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
-          appBar: AppBar(
-            title: const Text('Settings'),
-          ),
+          appBar: AppBar(title: const Text('Settings')),
           body: SafeArea(
             child: ListView(
               padding: const EdgeInsets.all(20.0),
@@ -50,142 +48,155 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Owner Option Card
-                Card(
-                  elevation: currentRole == UserRole.owner ? 3 : 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(
-                      color: currentRole == UserRole.owner
-                          ? AppColors.primaryOrange
-                          : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () => _switchRoleAndNavigate(context, UserRole.owner),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryBlue.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.account_balance,
-                              color: AppColors.primaryBlue,
-                              size: 26,
-                            ),
+                RadioGroup<UserRole>(
+                  groupValue: currentRole,
+                  onChanged: (role) {
+                    if (role != null) _switchRoleAndNavigate(context, role);
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Owner Option Card
+                      Card(
+                        elevation: currentRole == UserRole.owner ? 3 : 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(
+                            color: currentRole == UserRole.owner
+                                ? AppColors.primaryOrange
+                                : Colors.transparent,
+                            width: 2,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  'Owner',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary,
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () =>
+                              _switchRoleAndNavigate(context, UserRole.owner),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryBlue.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.account_balance,
+                                    color: AppColors.primaryBlue,
+                                    size: 26,
                                   ),
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Send funds, review expenses, and sign off milestones.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textSecondary,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Owner',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Send funds, review expenses, and sign off milestones.',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                ),
+                                Radio<UserRole>(
+                                  value: UserRole.owner,
+                                  activeColor: AppColors.primaryOrange,
                                 ),
                               ],
                             ),
                           ),
-                          Radio<UserRole>(
-                            value: UserRole.owner,
-                            groupValue: currentRole,
-                            activeColor: AppColors.primaryOrange,
-                            onChanged: (val) {
-                              if (val != null) _switchRoleAndNavigate(context, val);
-                            },
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
+                      const SizedBox(height: 12),
 
-                // Contractor Option Card
-                Card(
-                  elevation: currentRole == UserRole.contractor ? 3 : 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(
-                      color: currentRole == UserRole.contractor
-                          ? AppColors.primaryOrange
-                          : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () => _switchRoleAndNavigate(context, UserRole.contractor),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryOrange.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.engineering,
-                              color: AppColors.primaryOrange,
-                              size: 26,
-                            ),
+                      // Contractor Option Card
+                      Card(
+                        elevation: currentRole == UserRole.contractor ? 3 : 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(
+                            color: currentRole == UserRole.contractor
+                                ? AppColors.primaryOrange
+                                : Colors.transparent,
+                            width: 2,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  'Contractor',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary,
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => _switchRoleAndNavigate(
+                            context,
+                            UserRole.contractor,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryOrange.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.engineering,
+                                    color: AppColors.primaryOrange,
+                                    size: 26,
                                   ),
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Confirm receipts, submit expenses, and advance milestone progress.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textSecondary,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Contractor',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Confirm receipts, submit expenses, and advance milestone progress.',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                ),
+                                Radio<UserRole>(
+                                  value: UserRole.contractor,
+                                  activeColor: AppColors.primaryOrange,
                                 ),
                               ],
                             ),
                           ),
-                          Radio<UserRole>(
-                            value: UserRole.contractor,
-                            groupValue: currentRole,
-                            activeColor: AppColors.primaryOrange,
-                            onChanged: (val) {
-                              if (val != null) _switchRoleAndNavigate(context, val);
-                            },
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
 
@@ -199,7 +210,11 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.info_outline, color: AppColors.hint, size: 20),
+                      const Icon(
+                        Icons.info_outline,
+                        color: AppColors.hint,
+                        size: 20,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(

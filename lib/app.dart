@@ -6,7 +6,7 @@ import 'state/app_state.dart';
 class ConstructionApp extends StatelessWidget {
   final AppState appState;
 
-  const ConstructionApp({Key? key, required this.appState}) : super(key: key);
+  const ConstructionApp({super.key, required this.appState});
 
   @override
   Widget build(BuildContext context) {

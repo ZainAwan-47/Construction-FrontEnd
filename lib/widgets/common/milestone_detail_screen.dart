@@ -6,7 +6,7 @@ import '../../models/milestone.dart';
 
 class MilestoneDetailScreen extends StatelessWidget {
   final int milestoneId;
-  const MilestoneDetailScreen({Key? key, required this.milestoneId}) : super(key: key);
+  const MilestoneDetailScreen({super.key, required this.milestoneId});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class MilestoneDetailScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: bannerColor.withOpacity(0.1),
+                      color: bannerColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: bannerColor),
                     ),
@@ -95,7 +95,7 @@ class MilestoneDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withValues(alpha: 0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -194,9 +194,9 @@ class MilestoneDetailScreen extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryOrange.withOpacity(0.08),
+                          color: AppColors.primaryOrange.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.primaryOrange.withOpacity(0.4)),
+                          border: Border.all(color: AppColors.primaryOrange.withValues(alpha: 0.4)),
                         ),
                         child: Row(
                           children: const [
@@ -287,9 +287,9 @@ class MilestoneDetailScreen extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.warning.withOpacity(0.08),
+                          color: AppColors.warning.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.warning.withOpacity(0.4)),
+                          border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
                         ),
                         child: Row(
                           children: const [

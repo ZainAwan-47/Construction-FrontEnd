@@ -10,13 +10,13 @@ class MetricCard extends StatelessWidget {
   final bool isHighlighted;
 
   const MetricCard({
-    Key? key,
+    super.key,
     required this.label,
     required this.amount,
     required this.icon,
     this.iconColor,
     this.isHighlighted = false,
-  }) : super(key: key);
+  });
 
   // Native Dart currency formatter without requiring 'intl' package
   String _formatCurrency(double value) {
@@ -30,10 +30,10 @@ class MetricCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isHighlighted ? AppColors.lightOrange : AppColors.surfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: isHighlighted ? Border.all(color: AppColors.primaryOrange.withOpacity(0.3), width: 1.5) : null,
+        border: isHighlighted ? Border.all(color: AppColors.primaryOrange.withValues(alpha: 0.3), width: 1.5) : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

@@ -6,7 +6,7 @@ import '../../models/expense.dart';
 
 class AdjustDisputedExpenseScreen extends StatefulWidget {
   final String expenseId;
-  const AdjustDisputedExpenseScreen({Key? key, required this.expenseId}) : super(key: key);
+  const AdjustDisputedExpenseScreen({super.key, required this.expenseId});
 
   @override
   State<AdjustDisputedExpenseScreen> createState() => _AdjustDisputedExpenseScreenState();
@@ -160,7 +160,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                   decoration: BoxDecoration(
                     color: AppColors.surfaceWhite,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                    border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +199,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   decoration: InputDecoration(
                     labelText: 'Category',
                     filled: true,
@@ -261,7 +261,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: _receiptAttached
-                        ? AppColors.success.withOpacity(0.05)
+                        ? AppColors.success.withValues(alpha: 0.05)
                         : AppColors.surfaceWhite,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(

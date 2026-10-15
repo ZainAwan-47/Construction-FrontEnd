@@ -4,7 +4,7 @@ import '../widgets/common/app_card.dart';
 import '../widgets/common/status_badge.dart';
 
 class PlaceholderHomeScreen extends StatelessWidget {
-  const PlaceholderHomeScreen({Key? key}) : super(key: key);
+  const PlaceholderHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

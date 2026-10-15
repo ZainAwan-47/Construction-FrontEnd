@@ -4,7 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../state/app_state.dart';
 
 class SendFundsScreen extends StatefulWidget {
-  const SendFundsScreen({Key? key}) : super(key: key);
+  const SendFundsScreen({super.key});
 
   @override
   State<SendFundsScreen> createState() => _SendFundsScreenState();
@@ -115,7 +115,7 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: _proofAttached ? AppColors.success.withOpacity(0.05) : AppColors.surfaceWhite,
+                    color: _proofAttached ? AppColors.success.withValues(alpha: 0.05) : AppColors.surfaceWhite,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _proofAttached ? AppColors.success : (_attemptedSubmit && !_proofAttached ? AppColors.error : Colors.grey.shade300),

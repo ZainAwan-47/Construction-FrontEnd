@@ -24,7 +24,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: AppColors.surfaceWhite,
         elevation: 4, 
-        shadowColor: Colors.black.withOpacity(0.15),
+        shadowColor: Colors.black.withValues(alpha: 0.15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),

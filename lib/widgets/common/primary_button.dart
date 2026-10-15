@@ -6,11 +6,11 @@ class PrimaryButton extends StatelessWidget {
   final bool isOutline;
 
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.label,
     this.onPressed,
     this.isOutline = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

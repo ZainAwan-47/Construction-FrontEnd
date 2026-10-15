@@ -7,7 +7,7 @@ import '../../models/expense.dart';
 class ExpenseDetailScreen extends StatefulWidget {
   final String expenseId;
 
-  const ExpenseDetailScreen({Key? key, required this.expenseId}) : super(key: key);
+  const ExpenseDetailScreen({super.key, required this.expenseId});
 
   @override
   State<ExpenseDetailScreen> createState() => _ExpenseDetailScreenState();
@@ -102,7 +102,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isPending ? AppColors.warning.withOpacity(0.1) : (expense.status == ExpenseStatus.approved ? AppColors.success.withOpacity(0.1) : AppColors.error.withOpacity(0.1)),
+                      color: isPending ? AppColors.warning.withValues(alpha: 0.1) : (expense.status == ExpenseStatus.approved ? AppColors.success.withValues(alpha: 0.1) : AppColors.error.withValues(alpha: 0.1)),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isPending ? AppColors.warning : (expense.status == ExpenseStatus.approved ? AppColors.success : AppColors.error),
@@ -134,7 +134,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.surfaceWhite,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,7 +261,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                       decoration: BoxDecoration(
                         color: AppColors.surfaceWhite,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                        border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

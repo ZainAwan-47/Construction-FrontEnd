@@ -10,14 +10,14 @@ class AuthTextField extends StatelessWidget {
   final TextInputType keyboardType;
 
   const AuthTextField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.icon,
     required this.controller,
     this.isPassword = false,
     this.validator,
     this.keyboardType = TextInputType.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class AuthTextField extends StatelessWidget {
           hintStyle: const TextStyle(color: AppColors.hint, fontWeight: FontWeight.w400),
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Icon(icon, color: AppColors.primaryBlue.withOpacity(0.6), size: 22),
+            child: Icon(icon, color: AppColors.primaryBlue.withValues(alpha: 0.6), size: 22),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

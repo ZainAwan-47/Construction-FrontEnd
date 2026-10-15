@@ -8,11 +8,11 @@ class RoleBottomNav extends StatelessWidget {
   final Function(int) onTap;
 
   const RoleBottomNav({
-    Key? key,
+    super.key,
     required this.role,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class RoleBottomNav extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),

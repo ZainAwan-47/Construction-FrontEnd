@@ -3,7 +3,7 @@ import '../../core/theme/app_colors.dart';
 import '../../widgets/auth/auth_text_field.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+  const SignupScreen({super.key});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();

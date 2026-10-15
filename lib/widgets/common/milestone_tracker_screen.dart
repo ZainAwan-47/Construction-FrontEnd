@@ -5,7 +5,7 @@ import '../../state/app_state.dart';
 import '../../models/milestone.dart';
 
 class MilestoneTrackerScreen extends StatelessWidget {
-  const MilestoneTrackerScreen({Key? key}) : super(key: key);
+  const MilestoneTrackerScreen({super.key});
 
   Widget _buildStatusIndicator(MilestoneStatus status) {
     switch (status) {
@@ -14,7 +14,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.15),
+            color: AppColors.success.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.check_circle, color: AppColors.success, size: 20),
@@ -24,7 +24,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppColors.warning.withOpacity(0.15),
+            color: AppColors.warning.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.pending_actions, color: AppColors.warning, size: 20),
@@ -34,7 +34,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppColors.primaryOrange.withOpacity(0.15),
+            color: AppColors.primaryOrange.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.construction, color: AppColors.primaryOrange, size: 20),
@@ -113,7 +113,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -173,7 +173,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     elevation: isLocked ? 0 : 2,
-                    color: isLocked ? AppColors.surfaceWhite.withOpacity(0.6) : AppColors.surfaceWhite,
+                    color: isLocked ? AppColors.surfaceWhite.withValues(alpha: 0.6) : AppColors.surfaceWhite,
                     child: InkWell(
                       onTap: () {
                         Navigator.pushNamed(
@@ -237,7 +237,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
                       ),
                     ),
                   );
-                }).toList(),
+                }),
               ],
             );
           },

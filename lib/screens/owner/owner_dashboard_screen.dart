@@ -7,7 +7,7 @@ import '../../widgets/dashboard/quick_action_card.dart';
 import '../../widgets/navigation/role_bottom_nav.dart';
 
 class OwnerDashboardScreen extends StatelessWidget {
-  const OwnerDashboardScreen({Key? key}) : super(key: key);
+  const OwnerDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +60,10 @@ class OwnerDashboardScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 24),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.warning.withOpacity(0.1),
+                      color: AppColors.warning.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: AppColors.warning.withOpacity(0.5),
+                        color: AppColors.warning.withValues(alpha: 0.5),
                       ),
                     ),
                     child: Row(

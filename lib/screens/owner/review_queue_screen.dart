@@ -6,7 +6,7 @@ import '../../state/app_state.dart';
 import '../../models/expense.dart';
 
 class ReviewQueueScreen extends StatelessWidget {
-  const ReviewQueueScreen({Key? key}) : super(key: key);
+  const ReviewQueueScreen({super.key});
 
   String _formatCurrency(double value) {
     return formatPkrCurrency(value);
