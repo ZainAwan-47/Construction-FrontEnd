@@ -5,9 +5,15 @@ import '../../state/app_state.dart';
 import '../../widgets/dashboard/metric_card.dart';
 import '../../widgets/dashboard/quick_action_card.dart';
 import '../../widgets/navigation/role_bottom_nav.dart';
+import '../../widgets/navigation/activity_notification_button.dart';
+import '../../widgets/navigation/dashboard_tab_back_button.dart';
+import '../../screens/owner/send_funds_screen.dart';
+import '../../screens/owner/review_queue_screen.dart';
+import '../../widgets/common/milestone_tracker_screen.dart';
+import '../../screens/common/settings_screen.dart';
 
-class OwnerDashboardScreen extends StatelessWidget {
-  const OwnerDashboardScreen({super.key});
+class _OwnerHomeTab extends StatelessWidget {
+  const _OwnerHomeTab();
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +25,8 @@ class OwnerDashboardScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
           appBar: AppBar(
+            leading: const DashboardTabBackButton(),
+            automaticallyImplyLeading: false,
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
@@ -37,12 +45,7 @@ class OwnerDashboardScreen extends StatelessWidget {
               ],
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined),
-                tooltip: 'Activity',
-                onPressed: () =>
-                    Navigator.pushNamed(context, AppRouter.activityCenterRoute),
-              ),
+              const ActivityNotificationButton(),
               const SizedBox(width: 8),
             ],
           ),
@@ -166,24 +169,69 @@ class OwnerDashboardScreen extends StatelessWidget {
               ],
             ),
           ),
-          bottomNavigationBar: RoleBottomNav(
-            role: state.activeRole,
-            currentIndex: 0,
-            onTap: (index) {
-              switch (index) {
-                case 1:
-                  Navigator.pushNamed(context, AppRouter.sendFundsRoute);
-                case 2:
-                  Navigator.pushNamed(context, AppRouter.reviewQueueRoute);
-                case 3:
-                  Navigator.pushNamed(context, AppRouter.milestoneTrackerRoute);
-                case 4:
-                  Navigator.pushNamed(context, AppRouter.settingsRoute);
-              }
-            },
-          ),
         );
       },
+    );
+  }
+}
+
+class OwnerDashboardScreen extends StatefulWidget {
+  const OwnerDashboardScreen({super.key});
+
+  @override
+  State<OwnerDashboardScreen> createState() => _OwnerDashboardScreenState();
+}
+
+class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
+  int _selectedIndex = 0;
+  final List<int> _tabHistory = [];
+
+  bool get _canGoBack => _selectedIndex != 0 || _tabHistory.isNotEmpty;
+
+  void _selectTab(int index) {
+    if (index == _selectedIndex) return;
+    setState(() {
+      _tabHistory.add(_selectedIndex);
+      _selectedIndex = index;
+    });
+  }
+
+  void _goBack() {
+    if (!_canGoBack) return;
+    setState(() {
+      _selectedIndex = _tabHistory.isNotEmpty ? _tabHistory.removeLast() : 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DashboardTabNavigation(
+      canGoBack: _canGoBack,
+      onBack: _goBack,
+      child: PopScope(
+        canPop: !_canGoBack,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop && _canGoBack) _goBack();
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.surfaceWarmGray,
+          body: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              const _OwnerHomeTab(),
+              SendFundsScreen(onSubmitted: () => _selectTab(0)),
+              const ReviewQueueScreen(),
+              const MilestoneTrackerScreen(),
+              const SettingsScreen(),
+            ],
+          ),
+          bottomNavigationBar: RoleBottomNav(
+            role: AppState().activeRole,
+            currentIndex: _selectedIndex,
+            onTap: _selectTab,
+          ),
+        ),
+      ),
     );
   }
 }

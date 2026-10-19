@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../state/app_state.dart';
 import '../../models/expense.dart';
+import '../../widgets/navigation/dashboard_tab_back_button.dart';
 
 class MyExpensesScreen extends StatelessWidget {
   const MyExpensesScreen({super.key});
@@ -44,13 +45,17 @@ class MyExpensesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surfaceWarmGray,
-      appBar: AppBar(title: const Text('My Expenses')),
+      appBar: AppBar(
+        leading: const DashboardTabBackButton(),
+        automaticallyImplyLeading: false,
+        title: const Text('My Expenses'),
+      ),
       body: SafeArea(
         child: AnimatedBuilder(
           animation: AppState(),
           builder: (context, _) {
             final expenses = AppState().allExpenses;
-            
+
             return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: expenses.length,

@@ -3,6 +3,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../state/app_state.dart';
 import '../../models/milestone.dart';
+import '../navigation/dashboard_tab_back_button.dart';
 
 class MilestoneTrackerScreen extends StatelessWidget {
   const MilestoneTrackerScreen({super.key});
@@ -83,6 +84,8 @@ class MilestoneTrackerScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.surfaceWarmGray,
       appBar: AppBar(
+        leading: const DashboardTabBackButton(),
+        automaticallyImplyLeading: false,
         title: const Text('Milestones'),
       ),
       body: SafeArea(

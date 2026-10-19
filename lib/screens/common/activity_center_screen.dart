@@ -16,8 +16,12 @@ class ActivityCenterScreen extends StatelessWidget {
         return Icons.report_gmailerrorred_outlined;
       case ActivityType.expenseResubmitted:
         return Icons.refresh_outlined;
+      case ActivityType.transferCreated:
+        return Icons.call_received_outlined;
       case ActivityType.transferConfirmed:
         return Icons.account_balance_wallet_outlined;
+      case ActivityType.milestoneReady:
+        return Icons.assignment_turned_in_outlined;
       case ActivityType.milestoneSignedOff:
         return Icons.fact_check_outlined;
       case ActivityType.inspectionRecorded:
@@ -39,10 +43,37 @@ class ActivityCenterScreen extends StatelessWidget {
     return AnimatedBuilder(
       animation: AppState(),
       builder: (context, _) {
-        final entries = AppState().activityEntries;
+        final state = AppState();
+        final entries = state.activityEntriesForRole(state.activeRole);
+        final unreadCount = state.unreadActivityCount;
         return Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
-          appBar: AppBar(title: const Text('Activity')),
+          appBar: AppBar(
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text('Activity'),
+                Text(
+                  'In-app only · no remote push notifications',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              if (unreadCount > 0)
+                TextButton(
+                  onPressed: state.markAllActivitiesRead,
+                  child: const Text(
+                    'Mark all read',
+                    style: TextStyle(color: AppColors.surfaceWhite),
+                  ),
+                ),
+            ],
+          ),
           body: entries.isEmpty
               ? Center(
                   child: Padding(
@@ -94,7 +125,9 @@ class ActivityCenterScreen extends StatelessWidget {
                     return Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceWhite,
+                        color: entry.isRead
+                            ? AppColors.surfaceWhite
+                            : AppColors.lightBlue.withValues(alpha: 0.55),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
@@ -140,13 +173,34 @@ class ActivityCenterScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
-                                  _timestamp(entry.occurredAt),
-                                  style: const TextStyle(
-                                    color: AppColors.hint,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        _timestamp(entry.occurredAt),
+                                        style: const TextStyle(
+                                          color: AppColors.hint,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    if (!entry.isRead)
+                                      TextButton(
+                                        onPressed: () =>
+                                            state.markActivityRead(entry.id),
+                                        child: const Text('Mark as read'),
+                                      )
+                                    else
+                                      const Text(
+                                        'Read',
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ],
                             ),

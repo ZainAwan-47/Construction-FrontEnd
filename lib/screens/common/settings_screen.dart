@@ -3,6 +3,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../state/app_state.dart';
 import '../../models/user_role.dart';
+import '../../widgets/navigation/dashboard_tab_back_button.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -110,7 +111,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
-          appBar: AppBar(title: const Text('Settings')),
+          appBar: AppBar(
+            leading: const DashboardTabBackButton(),
+            automaticallyImplyLeading: false,
+            title: const Text('Settings'),
+          ),
           body: SafeArea(
             child: ListView(
               padding: const EdgeInsets.all(20.0),

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import '../../core/formatters/currency_formatter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../state/app_state.dart';
+import '../../widgets/navigation/dashboard_tab_back_button.dart';
 
 class SendFundsScreen extends StatefulWidget {
-  const SendFundsScreen({super.key});
+  final VoidCallback? onSubmitted;
+
+  const SendFundsScreen({super.key, this.onSubmitted});
 
   @override
   State<SendFundsScreen> createState() => _SendFundsScreenState();
@@ -55,15 +58,21 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-      Navigator.pop(context);
+      if (widget.onSubmitted != null) {
+        widget.onSubmitted!();
+      } else {
+        Navigator.pop(context);
       }
-      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surfaceWarmGray,
       appBar: AppBar(
+        leading: const DashboardTabBackButton(),
+        automaticallyImplyLeading: false,
         title: const Text('Send Funds'),
       ),
       body: SafeArea(
@@ -76,7 +85,7 @@ class _SendFundsScreenState extends State<SendFundsScreen> {
               children: [
                 const Text('Transfer Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
                 const SizedBox(height: 16),
-                
+
                 TextFormField(
                   controller: _amountController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),

@@ -35,17 +35,67 @@ class AppState extends ChangeNotifier {
   }
 
   final List<ActivityEntry> _activityEntries = [];
+  int _nextActivityId = 0;
   List<ActivityEntry> get activityEntries =>
       List.unmodifiable(_activityEntries);
 
-  void _recordActivity(ActivityType type, String title, String description) {
+  List<ActivityEntry> activityEntriesForRole(UserRole role) =>
+      List.unmodifiable(
+        _activityEntries.where(
+          (entry) =>
+              entry.recipientRole ==
+              (role == UserRole.both ? UserRole.owner : role),
+        ),
+      );
+
+  UserRole get _activeActivityRole =>
+      _activeRole == UserRole.both ? UserRole.owner : _activeRole;
+
+  int get unreadActivityCount => _activityEntries
+      .where(
+        (entry) => entry.recipientRole == _activeActivityRole && !entry.isRead,
+      )
+      .length;
+
+  bool markActivityRead(int id) {
+    final index = _activityEntries.indexWhere(
+      (entry) =>
+          entry.id == id &&
+          entry.recipientRole == _activeActivityRole &&
+          !entry.isRead,
+    );
+    if (index == -1) return false;
+    _activityEntries[index].isRead = true;
+    notifyListeners();
+    return true;
+  }
+
+  void markAllActivitiesRead() {
+    var changed = false;
+    for (final entry in _activityEntries) {
+      if (entry.recipientRole == _activeActivityRole && !entry.isRead) {
+        entry.isRead = true;
+        changed = true;
+      }
+    }
+    if (changed) notifyListeners();
+  }
+
+  void _recordActivity(
+    ActivityType type,
+    String title,
+    String description, {
+    required UserRole recipientRole,
+  }) {
     _activityEntries.insert(
       0,
       ActivityEntry(
+        id: ++_nextActivityId,
         type: type,
         title: title,
         description: description,
         occurredAt: DateTime.now(),
+        recipientRole: recipientRole,
       ),
     );
   }
@@ -180,6 +230,7 @@ class AppState extends ChangeNotifier {
       approved
           ? 'The owner recorded approval after all handover requirements were met.'
           : 'The owner recorded inspection feedback for the contractor.',
+      recipientRole: UserRole.contractor,
     );
     notifyListeners();
     return true;
@@ -198,6 +249,7 @@ class AppState extends ChangeNotifier {
       ActivityType.projectCompleted,
       'Project handover recorded',
       'The owner marked the project complete in this local demo.',
+      recipientRole: UserRole.contractor,
     );
     notifyListeners();
     return true;
@@ -214,6 +266,12 @@ class AppState extends ChangeNotifier {
     if (target.status != MilestoneStatus.inProgress) return false;
 
     target.status = MilestoneStatus.awaitingSignOff;
+    _recordActivity(
+      ActivityType.milestoneReady,
+      'Phase $id ready for sign-off',
+      'The contractor marked ${target.title} ready for Owner sign-off.',
+      recipientRole: UserRole.owner,
+    );
     notifyListeners();
     return true;
   }
@@ -253,6 +311,7 @@ class AppState extends ChangeNotifier {
       ActivityType.milestoneSignedOff,
       'Phase $id signed off',
       'The owner completed ${target.title}.',
+      recipientRole: UserRole.contractor,
     );
     notifyListeners();
     return true;
@@ -343,6 +402,7 @@ class AppState extends ChangeNotifier {
       ActivityType.expenseSubmitted,
       'Expense submitted',
       'A $category expense is awaiting owner review.',
+      recipientRole: UserRole.owner,
     );
     notifyListeners();
     return true;
@@ -363,6 +423,7 @@ class AppState extends ChangeNotifier {
       ActivityType.expenseApproved,
       'Expense approved',
       'The owner approved a ${expense.category.toLowerCase()} expense.',
+      recipientRole: UserRole.contractor,
     );
     notifyListeners();
     return true;
@@ -385,6 +446,7 @@ class AppState extends ChangeNotifier {
       ActivityType.expenseDisputed,
       'Expense disputed',
       'The owner requested changes to a ${expense.category.toLowerCase()} expense.',
+      recipientRole: UserRole.contractor,
     );
     notifyListeners();
     return true;
@@ -422,6 +484,7 @@ class AppState extends ChangeNotifier {
       ActivityType.expenseResubmitted,
       'Expense resubmitted',
       'A revised ${expense.category.toLowerCase()} expense is awaiting owner review.',
+      recipientRole: UserRole.owner,
     );
     notifyListeners();
     return true;
@@ -471,6 +534,12 @@ class AppState extends ChangeNotifier {
         status: TransferStatus.awaitingConfirmation,
       ),
     );
+    _recordActivity(
+      ActivityType.transferCreated,
+      'Incoming transfer awaiting confirmation',
+      'The owner recorded a demo transfer for contractor confirmation.',
+      recipientRole: UserRole.contractor,
+    );
     notifyListeners();
     return true;
   }
@@ -491,6 +560,7 @@ class AppState extends ChangeNotifier {
       ActivityType.transferConfirmed,
       'Transfer confirmed',
       'The contractor marked an incoming demo transfer as received.',
+      recipientRole: UserRole.owner,
     );
     notifyListeners();
     return true;

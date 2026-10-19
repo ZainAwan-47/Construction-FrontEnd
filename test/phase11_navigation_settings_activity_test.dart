@@ -42,7 +42,14 @@ void main() {
     expect(find.text('Milestones'), findsOneWidget);
     expect(find.byTooltip('Activity'), findsOneWidget);
     expect(find.text('My Expenses'), findsNothing);
-    expect(find.text('Settings', skipOffstage: false), findsOneWidget);
+    expect(find.byType(RoleBottomNav), findsOneWidget);
+    expect(
+      tester
+          .widget<BottomNavigationBar>(find.byType(BottomNavigationBar))
+          .items
+          .map((item) => item.label),
+      ['Home', 'Expenses', 'Milestones', 'Settings'],
+    );
     await tester.tap(find.byTooltip('Activity'));
     await tester.pumpAndSettle();
     expect(find.byType(ActivityCenterScreen), findsOneWidget);
@@ -245,14 +252,17 @@ void main() {
       isTrue,
     );
     await tester.pump();
+    expect(state.activityEntries.first.type, ActivityType.expenseSubmitted);
+    expect(() => state.activityEntries.clear(), throwsUnsupportedError);
+
+    state.switchRole(UserRole.owner);
+    await tester.pump();
     expect(find.text('Expense submitted'), findsOneWidget);
     expect(
       find.text('A Materials expense is awaiting owner review.'),
       findsOneWidget,
     );
     expect(find.text('You’re all caught up'), findsNothing);
-    expect(state.activityEntries.first.type, ActivityType.expenseSubmitted);
-    expect(() => state.activityEntries.clear(), throwsUnsupportedError);
   });
 
   test('successful workflow transitions create ordered activities once', () {
@@ -265,6 +275,7 @@ void main() {
     expect(state.activityEntries, hasLength(initialCount));
 
     expect(state.disputeExpense('exp_003', 'Please revise this item.'), isTrue);
+    expect(state.activityEntries.first.recipientRole, UserRole.contractor);
     final disputedCount = state.activityEntries.length;
     expect(state.disputeExpense('exp_003', 'Repeated action'), isFalse);
     expect(state.activityEntries, hasLength(disputedCount));
@@ -280,6 +291,7 @@ void main() {
       ),
       isTrue,
     );
+    expect(state.activityEntries.first.recipientRole, UserRole.owner);
     final resubmittedCount = state.activityEntries.length;
     expect(
       state.resubmitExpense(
@@ -297,24 +309,33 @@ void main() {
       state.addExpense('Tile', 900, 'Phase 11 test expense', true),
       isTrue,
     );
+    expect(state.activityEntries.first.recipientRole, UserRole.owner);
     final newExpenseId = state.allExpenses.first.id;
     state.switchRole(UserRole.owner);
     expect(state.approveExpense(newExpenseId), isTrue);
+    expect(state.activityEntries.first.recipientRole, UserRole.contractor);
     final approvedCount = state.activityEntries.length;
     expect(state.approveExpense(newExpenseId), isFalse);
     expect(state.activityEntries, hasLength(approvedCount));
 
     expect(state.addTransfer(100, 'Demo activity transfer', true), isTrue);
+    expect(state.activityEntries.first.type, ActivityType.transferCreated);
+    expect(state.activityEntries.first.recipientRole, UserRole.contractor);
     final transferId = state.pendingTransfers.last.id;
     state.switchRole(UserRole.contractor);
     expect(state.confirmTransfer(transferId), isTrue);
+    expect(state.activityEntries.first.type, ActivityType.transferConfirmed);
+    expect(state.activityEntries.first.recipientRole, UserRole.owner);
     final confirmedCount = state.activityEntries.length;
     expect(state.confirmTransfer(transferId), isFalse);
     expect(state.activityEntries, hasLength(confirmedCount));
 
     expect(state.markMilestoneReady(1), isTrue);
+    expect(state.activityEntries.first.type, ActivityType.milestoneReady);
+    expect(state.activityEntries.first.recipientRole, UserRole.owner);
     state.switchRole(UserRole.owner);
     expect(state.signOffMilestone(1), isTrue);
+    expect(state.activityEntries.first.recipientRole, UserRole.contractor);
     final signOffCount = state.activityEntries.length;
     expect(state.signOffMilestone(1), isFalse);
     expect(state.activityEntries, hasLength(signOffCount));
@@ -325,6 +346,7 @@ void main() {
       ),
       isTrue,
     );
+    expect(state.activityEntries.first.recipientRole, UserRole.contractor);
 
     state.switchRole(UserRole.contractor);
     expect(
@@ -352,7 +374,9 @@ void main() {
     );
     expect(state.approveExpense(activityTestExpense.id), isTrue);
     expect(state.recordFinalInspection(approved: true, feedback: ''), isTrue);
+    expect(state.activityEntries.first.recipientRole, UserRole.contractor);
     expect(state.completeProject(), isTrue);
+    expect(state.activityEntries.first.recipientRole, UserRole.contractor);
     final completedCount = state.activityEntries.length;
     expect(state.completeProject(), isFalse);
     expect(state.activityEntries, hasLength(completedCount));
@@ -364,6 +388,7 @@ void main() {
         ActivityType.expenseApproved,
         ActivityType.expenseDisputed,
         ActivityType.expenseResubmitted,
+        ActivityType.transferCreated,
         ActivityType.transferConfirmed,
         ActivityType.milestoneSignedOff,
         ActivityType.inspectionRecorded,

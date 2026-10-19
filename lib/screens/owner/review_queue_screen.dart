@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../state/app_state.dart';
 import '../../models/expense.dart';
+import '../../widgets/navigation/dashboard_tab_back_button.dart';
 
 class ReviewQueueScreen extends StatelessWidget {
   const ReviewQueueScreen({super.key});
@@ -47,6 +48,8 @@ class ReviewQueueScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.surfaceWarmGray,
         appBar: AppBar(
+          leading: const DashboardTabBackButton(),
+          automaticallyImplyLeading: false,
           title: const Text('Review Expenses'),
           bottom: const TabBar(
             indicatorColor: AppColors.primaryOrange,
