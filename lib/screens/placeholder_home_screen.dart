@@ -10,7 +10,7 @@ class PlaceholderHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🏗️ Construction App'),
+        title: const Text('Construction App'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,9 +28,9 @@ class PlaceholderHomeScreen extends StatelessWidget {
                 children: const [
                   Text('UI Component Test'),
                   SizedBox(height: 8),
-                  StatusBadge(status: BadgeStatus.approved, text: '✅ Approved'),
+                  StatusBadge(status: BadgeStatus.approved, text: 'Approved'),
                   SizedBox(height: 8),
-                  StatusBadge(status: BadgeStatus.pending, text: '⏳ Pending'),
+                  StatusBadge(status: BadgeStatus.pending, text: 'Pending'),
                 ],
               ),
             ),

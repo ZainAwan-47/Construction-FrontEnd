@@ -234,6 +234,26 @@ class ContractorDashboardScreen extends StatelessWidget {
                         AppRouter.settingsRoute,
                       ),
                     ),
+                    QuickActionCard(
+                      title: 'Handover Status',
+                      subtitle: state.isProjectCompleted
+                          ? 'Project handover complete'
+                          : '${state.handoverBlockers.length} outstanding items',
+                      icon: Icons.handshake_outlined,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRouter.finalInspectionRoute,
+                      ),
+                    ),
+                    QuickActionCard(
+                      title: 'Final Project Report',
+                      subtitle: 'Review project records',
+                      icon: Icons.description_outlined,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRouter.finalProjectReportRoute,
+                      ),
+                    ),
                   ],
                 ),
               ],

@@ -188,11 +188,24 @@ class OwnerDashboardScreen extends StatelessWidget {
                     ),
                     QuickActionCard(
                       title: 'Final Report',
-                      subtitle: 'PDF generation',
+                      subtitle: 'Project outcomes and finances',
                       icon: Icons.picture_as_pdf_outlined,
                       onTap: () => Navigator.pushNamed(
                         context,
-                        AppRouter.placeholderRoute,
+                        AppRouter.finalProjectReportRoute,
+                      ),
+                    ),
+                    QuickActionCard(
+                      title: 'Final Inspection',
+                      subtitle: state.isProjectCompleted
+                          ? 'Project handover complete'
+                          : state.isReadyForHandover
+                          ? 'Ready for inspection'
+                          : '${state.handoverBlockers.length} outstanding items',
+                      icon: Icons.fact_check_outlined,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRouter.finalInspectionRoute,
                       ),
                     ),
                   ],

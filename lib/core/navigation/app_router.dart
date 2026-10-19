@@ -13,6 +13,8 @@ import '../../screens/owner/expense_detail_screen.dart';
 import '../../widgets/common/milestone_tracker_screen.dart';
 import '../../widgets/common/milestone_detail_screen.dart';
 import '../../screens/common/settings_screen.dart';
+import '../../screens/common/final_inspection_screen.dart';
+import '../../screens/common/final_project_report_screen.dart';
 
 class AppRouter {
   static const String initialRoute = '/splash';
@@ -29,6 +31,8 @@ class AppRouter {
   static const String milestoneTrackerRoute = '/milestone_tracker';
   static const String milestoneDetailRoute = '/milestone_detail';
   static const String settingsRoute = '/settings';
+  static const String finalInspectionRoute = '/final_inspection';
+  static const String finalProjectReportRoute = '/final_project_report';
   static const String placeholderRoute = '/placeholder';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -70,6 +74,12 @@ class AppRouter {
         );
       case settingsRoute:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
+      case finalInspectionRoute:
+        return MaterialPageRoute(builder: (_) => const FinalInspectionScreen());
+      case finalProjectReportRoute:
+        return MaterialPageRoute(
+          builder: (_) => const FinalProjectReportScreen(),
+        );
       case placeholderRoute:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

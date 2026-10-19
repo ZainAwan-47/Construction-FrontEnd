@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_role.dart';
 import '../models/fund_transfer.dart';
 import '../models/expense.dart';
+import '../models/final_inspection.dart';
 import '../models/milestone.dart';
 
 class AppState extends ChangeNotifier {
@@ -62,6 +63,90 @@ class AppState extends ChangeNotifier {
   List<Milestone> get allMilestones => List.unmodifiable(_milestones);
   int get completedMilestoneCount =>
       _milestones.where((m) => m.status == MilestoneStatus.completed).length;
+  List<String> get handoverBlockers {
+    final blockers = <String>[
+      for (final milestone in _milestones)
+        if (milestone.status != MilestoneStatus.completed)
+          'Phase ${milestone.id}: ${milestone.title} is ${_milestoneStatusLabel(milestone.status)}',
+      for (final expense in _expenses)
+        if (expense.status != ExpenseStatus.approved)
+          'Expense: ${expense.description} is ${_expenseStatusLabel(expense.status)}',
+      for (final transfer in _transfers)
+        if (transfer.status != TransferStatus.confirmed)
+          'Transfer: ${transfer.reference} is awaiting confirmation',
+    ];
+    return List.unmodifiable(blockers);
+  }
+
+  List<FinalInspectionRecord> get finalInspectionRecords =>
+      List.unmodifiable(_finalInspectionRecords);
+
+  FinalInspectionRecord? get latestFinalInspection =>
+      _finalInspectionRecords.isEmpty ? null : _finalInspectionRecords.last;
+
+  DateTime? get projectCompletedDate => _projectCompletedDate;
+  bool get isProjectCompleted => _projectCompletedDate != null;
+  bool get isReadyForHandover => handoverBlockers.isEmpty;
+
+  String _milestoneStatusLabel(MilestoneStatus status) {
+    switch (status) {
+      case MilestoneStatus.locked:
+        return 'locked';
+      case MilestoneStatus.inProgress:
+        return 'in progress';
+      case MilestoneStatus.awaitingSignOff:
+        return 'awaiting owner sign-off';
+      case MilestoneStatus.completed:
+        return 'completed';
+    }
+  }
+
+  String _expenseStatusLabel(ExpenseStatus status) {
+    switch (status) {
+      case ExpenseStatus.pending:
+        return 'pending review';
+      case ExpenseStatus.approved:
+        return 'approved';
+      case ExpenseStatus.disputed:
+        return 'disputed';
+    }
+  }
+
+  final List<FinalInspectionRecord> _finalInspectionRecords = [];
+  DateTime? _projectCompletedDate;
+
+  bool recordFinalInspection({
+    required bool approved,
+    required String feedback,
+  }) {
+    if (_activeRole == UserRole.contractor || isProjectCompleted) return false;
+    if (!approved && feedback.trim().isEmpty) return false;
+    if (approved && !isReadyForHandover) return false;
+    if (approved && latestFinalInspection?.approved == true) return false;
+
+    _finalInspectionRecords.add(
+      FinalInspectionRecord(
+        approved: approved,
+        feedback: feedback.trim(),
+        date: DateTime.now(),
+      ),
+    );
+    notifyListeners();
+    return true;
+  }
+
+  bool completeProject() {
+    if (_activeRole == UserRole.contractor ||
+        isProjectCompleted ||
+        !isReadyForHandover ||
+        latestFinalInspection?.approved != true) {
+      return false;
+    }
+
+    _projectCompletedDate = DateTime.now();
+    notifyListeners();
+    return true;
+  }
 
   bool markMilestoneReady(int id) {
     // Role check: Contractor only
@@ -144,9 +229,16 @@ class AppState extends ChangeNotifier {
   ];
 
   List<Expense> get allExpenses => List.unmodifiable(_expenses);
+  List<Expense> get approvedExpenses => List.unmodifiable(
+    _expenses.where((e) => e.status == ExpenseStatus.approved),
+  );
 
   double get totalApprovedExpenses => _expenses
       .where((e) => e.status == ExpenseStatus.approved)
+      .fold(0.0, (sum, e) => sum + e.amount);
+
+  double get totalPendingExpenses => _expenses
+      .where((e) => e.status == ExpenseStatus.pending)
       .fold(0.0, (sum, e) => sum + e.amount);
 
   double get totalDisputedExpenses => _expenses
@@ -158,7 +250,7 @@ class AppState extends ChangeNotifier {
 
   bool addExpense(String category, double amount, String description, bool receiptAttached) {
     // Role check: Contractor only
-    if (_activeRole == UserRole.owner) return false;
+    if (_activeRole == UserRole.owner || isProjectCompleted) return false;
     if (!amount.isFinite || amount <= 0 || !receiptAttached || category.trim().isEmpty) {
       return false;
     }
@@ -181,7 +273,7 @@ class AppState extends ChangeNotifier {
 
   bool approveExpense(String id) {
     // Role check: Owner only
-    if (_activeRole == UserRole.contractor) return false;
+    if (_activeRole == UserRole.contractor || isProjectCompleted) return false;
 
     final index = _expenses.indexWhere((e) => e.id == id);
     if (index == -1) return false;
@@ -196,7 +288,7 @@ class AppState extends ChangeNotifier {
 
   bool disputeExpense(String id, String feedback) {
     // Role check: Owner only
-    if (_activeRole == UserRole.contractor) return false;
+    if (_activeRole == UserRole.contractor || isProjectCompleted) return false;
     if (feedback.trim().isEmpty) return false;
 
     final index = _expenses.indexWhere((e) => e.id == id);
@@ -213,7 +305,7 @@ class AppState extends ChangeNotifier {
 
   bool resubmitExpense(String id, String category, double amount, String description, bool receiptAttached) {
     // Role check: Contractor only
-    if (_activeRole == UserRole.owner) return false;
+    if (_activeRole == UserRole.owner || isProjectCompleted) return false;
     if (!amount.isFinite || amount <= 0 || !receiptAttached || category.trim().isEmpty) {
       return false;
     }
@@ -248,6 +340,10 @@ class AppState extends ChangeNotifier {
 
   List<FundTransfer> get pendingTransfers =>
       _transfers.where((t) => t.status == TransferStatus.awaitingConfirmation).toList();
+  List<FundTransfer> get allTransfers => List.unmodifiable(_transfers);
+  List<FundTransfer> get confirmedTransfers => List.unmodifiable(
+    _transfers.where((t) => t.status == TransferStatus.confirmed),
+  );
 
   double get _totalConfirmedInflow => _transfers
       .where((t) => t.status == TransferStatus.confirmed)
@@ -256,10 +352,11 @@ class AppState extends ChangeNotifier {
   double get unconfirmedIncomingFunds => _transfers
       .where((t) => t.status == TransferStatus.awaitingConfirmation)
       .fold(0.0, (sum, t) => sum + t.amount);
+  double get totalConfirmedTransfers => _totalConfirmedInflow;
 
   bool addTransfer(double amount, String reference, bool proofAttached) {
     // Role check: Owner only
-    if (_activeRole == UserRole.contractor) return false;
+    if (_activeRole == UserRole.contractor || isProjectCompleted) return false;
     if (!amount.isFinite || amount <= 0 || !proofAttached) return false;
 
     _transfers.add(
@@ -278,7 +375,7 @@ class AppState extends ChangeNotifier {
 
   bool confirmTransfer(String id) {
     // Role check: Contractor only
-    if (_activeRole == UserRole.owner) return false;
+    if (_activeRole == UserRole.owner || isProjectCompleted) return false;
 
     final index = _transfers.indexWhere((t) => t.id == id);
     if (index == -1) return false;
@@ -294,6 +391,8 @@ class AppState extends ChangeNotifier {
 
   // --- CORE BUSINESS LOGIC FORMULAS ---
   double get totalProjectBudget => _totalProjectBudget;
-  double get remainingProjectBudget => _totalProjectBudget - totalApprovedExpenses;
-  double get contractorCashInHand => _totalConfirmedInflow - totalApprovedExpenses;
+  double get remainingProjectBudget =>
+      _totalProjectBudget - totalApprovedExpenses;
+  double get contractorCashInHand =>
+      totalConfirmedTransfers - totalApprovedExpenses;
 }
