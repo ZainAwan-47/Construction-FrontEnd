@@ -16,8 +16,7 @@ class RoleBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isOwner =
-        role == UserRole.owner || role == UserRole.both;
+    final bool isOwner = role == UserRole.owner || role == UserRole.both;
 
     final List<BottomNavigationBarItem> items = isOwner
         ? const [
@@ -81,16 +80,19 @@ class RoleBottomNav extends StatelessWidget {
         ],
       ),
       child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onTap,
+        currentIndex: currentIndex >= 0 && currentIndex < items.length
+            ? currentIndex
+            : 0,
+        onTap: (index) {
+          if (index >= 0 && index < items.length) onTap(index);
+        },
         type: BottomNavigationBarType.fixed,
         backgroundColor: AppColors.surfaceWhite,
         selectedItemColor: AppColors.primaryOrange,
         unselectedItemColor: AppColors.hint,
         selectedFontSize: 11,
         unselectedFontSize: 11,
-        selectedLabelStyle:
-            const TextStyle(fontWeight: FontWeight.w700),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700),
         items: items,
       ),
     );

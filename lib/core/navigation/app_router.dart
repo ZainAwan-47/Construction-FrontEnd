@@ -14,6 +14,7 @@ import '../../screens/owner/expense_detail_screen.dart';
 import '../../widgets/common/milestone_tracker_screen.dart';
 import '../../widgets/common/milestone_detail_screen.dart';
 import '../../screens/common/settings_screen.dart';
+import '../../screens/common/activity_center_screen.dart';
 import '../../screens/common/final_inspection_screen.dart';
 import '../../screens/common/final_project_report_screen.dart';
 
@@ -33,6 +34,7 @@ class AppRouter {
   static const String milestoneTrackerRoute = '/milestone_tracker';
   static const String milestoneDetailRoute = '/milestone_detail';
   static const String settingsRoute = '/settings';
+  static const String activityCenterRoute = '/activity';
   static const String finalInspectionRoute = '/final_inspection';
   static const String finalProjectReportRoute = '/final_project_report';
   static const String placeholderRoute = '/placeholder';
@@ -53,7 +55,9 @@ class AppRouter {
       case ownerDashboardRoute:
         return MaterialPageRoute(builder: (_) => const OwnerDashboardScreen());
       case contractorDashboardRoute:
-        return MaterialPageRoute(builder: (_) => const ContractorDashboardScreen());
+        return MaterialPageRoute(
+          builder: (_) => const ContractorDashboardScreen(),
+        );
       case sendFundsRoute:
         return MaterialPageRoute(builder: (_) => const SendFundsScreen());
       case createExpenseRoute:
@@ -73,7 +77,9 @@ class AppRouter {
           builder: (_) => ExpenseDetailScreen(expenseId: expenseId),
         );
       case milestoneTrackerRoute:
-        return MaterialPageRoute(builder: (_) => const MilestoneTrackerScreen());
+        return MaterialPageRoute(
+          builder: (_) => const MilestoneTrackerScreen(),
+        );
       case milestoneDetailRoute:
         final milestoneId = settings.arguments as int;
         return MaterialPageRoute(
@@ -81,6 +87,8 @@ class AppRouter {
         );
       case settingsRoute:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
+      case activityCenterRoute:
+        return MaterialPageRoute(builder: (_) => const ActivityCenterScreen());
       case finalInspectionRoute:
         return MaterialPageRoute(builder: (_) => const FinalInspectionScreen());
       case finalProjectReportRoute:
@@ -100,9 +108,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => Scaffold(
             appBar: AppBar(title: const Text('Error')),
-            body: Center(
-              child: Text('No route defined for ${settings.name}'),
-            ),
+            body: Center(child: Text('No route defined for ${settings.name}')),
           ),
         );
     }

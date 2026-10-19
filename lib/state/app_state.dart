@@ -4,6 +4,7 @@ import '../models/fund_transfer.dart';
 import '../models/expense.dart';
 import '../models/final_inspection.dart';
 import '../models/milestone.dart';
+import '../models/activity_entry.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -12,6 +13,42 @@ class AppState extends ChangeNotifier {
 
   UserRole _activeRole = UserRole.owner;
   UserRole get activeRole => _activeRole;
+
+  String _demoProfileName = 'Demo User';
+  String get demoProfileName => _demoProfileName;
+
+  String _demoProfileEmail = 'ahmad@email.com';
+  String get demoProfileEmail => _demoProfileEmail;
+
+  bool updateDemoProfile({required String name, required String email}) {
+    final trimmedName = name.trim();
+    final trimmedEmail = email.trim();
+    if (trimmedName.isEmpty ||
+        !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(trimmedEmail)) {
+      return false;
+    }
+
+    _demoProfileName = trimmedName;
+    _demoProfileEmail = trimmedEmail;
+    notifyListeners();
+    return true;
+  }
+
+  final List<ActivityEntry> _activityEntries = [];
+  List<ActivityEntry> get activityEntries =>
+      List.unmodifiable(_activityEntries);
+
+  void _recordActivity(ActivityType type, String title, String description) {
+    _activityEntries.insert(
+      0,
+      ActivityEntry(
+        type: type,
+        title: title,
+        description: description,
+        occurredAt: DateTime.now(),
+      ),
+    );
+  }
 
   void switchRole(UserRole newRole) {
     _activeRole = newRole;
@@ -25,37 +62,43 @@ class AppState extends ChangeNotifier {
     Milestone(
       id: 1,
       title: 'Site Prep & Layout',
-      description: 'Machinery rentals, gravel, termite spray. Plot layout, boundary work, trenching, soil test.',
+      description:
+          'Machinery rentals, gravel, termite spray. Plot layout, boundary work, trenching, soil test.',
       status: MilestoneStatus.inProgress,
     ),
     Milestone(
       id: 2,
       title: 'Foundation & Base',
-      description: 'Grade-60 Steel, concrete, stone ballast. Footings cast, plinth beam concrete cured.',
+      description:
+          'Grade-60 Steel, concrete, stone ballast. Footings cast, plinth beam concrete cured.',
       status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 3,
       title: 'Superstructure',
-      description: 'Bricks, cement, sand, scaffolding. Columns raised, brick walls, roof slab cast.',
+      description:
+          'Bricks, cement, sand, scaffolding. Columns raised, brick walls, roof slab cast.',
       status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 4,
       title: 'MEP Rough-Ins',
-      description: 'PVC pipes, conduit, copper cables. Concealed plumbing/wiring pressure-tested.',
+      description:
+          'PVC pipes, conduit, copper cables. Concealed plumbing/wiring pressure-tested.',
       status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 5,
       title: 'Plaster & Flooring',
-      description: 'Plaster sand, tiles, marble, chemical. Screed, plaster curing, tile fixing.',
+      description:
+          'Plaster sand, tiles, marble, chemical. Screed, plaster curing, tile fixing.',
       status: MilestoneStatus.locked,
     ),
     Milestone(
       id: 6,
       title: 'Finishing & Handover',
-      description: 'Paint, primer, fixtures, woodwork. Final paint coats, fixtures, deep cleaning.',
+      description:
+          'Paint, primer, fixtures, woodwork. Final paint coats, fixtures, deep cleaning.',
       status: MilestoneStatus.locked,
     ),
   ];
@@ -131,6 +174,13 @@ class AppState extends ChangeNotifier {
         date: DateTime.now(),
       ),
     );
+    _recordActivity(
+      ActivityType.inspectionRecorded,
+      approved ? 'Final inspection approved' : 'Inspection needs work',
+      approved
+          ? 'The owner recorded approval after all handover requirements were met.'
+          : 'The owner recorded inspection feedback for the contractor.',
+    );
     notifyListeners();
     return true;
   }
@@ -144,6 +194,11 @@ class AppState extends ChangeNotifier {
     }
 
     _projectCompletedDate = DateTime.now();
+    _recordActivity(
+      ActivityType.projectCompleted,
+      'Project handover recorded',
+      'The owner marked the project complete in this local demo.',
+    );
     notifyListeners();
     return true;
   }
@@ -177,7 +232,8 @@ class AppState extends ChangeNotifier {
     // Sequential enforcement
     if (id > 1) {
       final prevIndex = _milestones.indexWhere((m) => m.id == id - 1);
-      if (prevIndex == -1 || _milestones[prevIndex].status != MilestoneStatus.completed) {
+      if (prevIndex == -1 ||
+          _milestones[prevIndex].status != MilestoneStatus.completed) {
         return false;
       }
     }
@@ -188,10 +244,16 @@ class AppState extends ChangeNotifier {
     // Unlock next milestone sequentially
     if (id < 6) {
       final nextIndex = _milestones.indexWhere((m) => m.id == id + 1);
-      if (nextIndex != -1 && _milestones[nextIndex].status == MilestoneStatus.locked) {
+      if (nextIndex != -1 &&
+          _milestones[nextIndex].status == MilestoneStatus.locked) {
         _milestones[nextIndex].status = MilestoneStatus.inProgress;
       }
     }
+    _recordActivity(
+      ActivityType.milestoneSignedOff,
+      'Phase $id signed off',
+      'The owner completed ${target.title}.',
+    );
     notifyListeners();
     return true;
   }
@@ -215,7 +277,9 @@ class AppState extends ChangeNotifier {
       receiptAttached: true,
       date: DateTime.now().subtract(const Duration(days: 5)),
       status: ExpenseStatus.disputed,
-      feedbackHistory: ['Price too high. Please provide market rate comparison.'],
+      feedbackHistory: [
+        'Price too high. Please provide market rate comparison.',
+      ],
     ),
     Expense(
       id: 'exp_003',
@@ -248,10 +312,18 @@ class AppState extends ChangeNotifier {
   int get pendingReviewCount =>
       _expenses.where((e) => e.status == ExpenseStatus.pending).length;
 
-  bool addExpense(String category, double amount, String description, bool receiptAttached) {
+  bool addExpense(
+    String category,
+    double amount,
+    String description,
+    bool receiptAttached,
+  ) {
     // Role check: Contractor only
     if (_activeRole == UserRole.owner || isProjectCompleted) return false;
-    if (!amount.isFinite || amount <= 0 || !receiptAttached || category.trim().isEmpty) {
+    if (!amount.isFinite ||
+        amount <= 0 ||
+        !receiptAttached ||
+        category.trim().isEmpty) {
       return false;
     }
 
@@ -266,6 +338,11 @@ class AppState extends ChangeNotifier {
         date: DateTime.now(),
         status: ExpenseStatus.pending,
       ),
+    );
+    _recordActivity(
+      ActivityType.expenseSubmitted,
+      'Expense submitted',
+      'A $category expense is awaiting owner review.',
     );
     notifyListeners();
     return true;
@@ -282,6 +359,11 @@ class AppState extends ChangeNotifier {
     if (expense.status != ExpenseStatus.pending) return false;
 
     expense.status = ExpenseStatus.approved;
+    _recordActivity(
+      ActivityType.expenseApproved,
+      'Expense approved',
+      'The owner approved a ${expense.category.toLowerCase()} expense.',
+    );
     notifyListeners();
     return true;
   }
@@ -299,14 +381,28 @@ class AppState extends ChangeNotifier {
 
     expense.status = ExpenseStatus.disputed;
     expense.feedbackHistory.add(feedback.trim());
+    _recordActivity(
+      ActivityType.expenseDisputed,
+      'Expense disputed',
+      'The owner requested changes to a ${expense.category.toLowerCase()} expense.',
+    );
     notifyListeners();
     return true;
   }
 
-  bool resubmitExpense(String id, String category, double amount, String description, bool receiptAttached) {
+  bool resubmitExpense(
+    String id,
+    String category,
+    double amount,
+    String description,
+    bool receiptAttached,
+  ) {
     // Role check: Contractor only
     if (_activeRole == UserRole.owner || isProjectCompleted) return false;
-    if (!amount.isFinite || amount <= 0 || !receiptAttached || category.trim().isEmpty) {
+    if (!amount.isFinite ||
+        amount <= 0 ||
+        !receiptAttached ||
+        category.trim().isEmpty) {
       return false;
     }
 
@@ -322,6 +418,11 @@ class AppState extends ChangeNotifier {
     expense.description = description;
     expense.receiptAttached = receiptAttached;
     expense.status = ExpenseStatus.pending;
+    _recordActivity(
+      ActivityType.expenseResubmitted,
+      'Expense resubmitted',
+      'A revised ${expense.category.toLowerCase()} expense is awaiting owner review.',
+    );
     notifyListeners();
     return true;
   }
@@ -338,8 +439,9 @@ class AppState extends ChangeNotifier {
     ),
   ];
 
-  List<FundTransfer> get pendingTransfers =>
-      _transfers.where((t) => t.status == TransferStatus.awaitingConfirmation).toList();
+  List<FundTransfer> get pendingTransfers => _transfers
+      .where((t) => t.status == TransferStatus.awaitingConfirmation)
+      .toList();
   List<FundTransfer> get allTransfers => List.unmodifiable(_transfers);
   List<FundTransfer> get confirmedTransfers => List.unmodifiable(
     _transfers.where((t) => t.status == TransferStatus.confirmed),
@@ -385,6 +487,11 @@ class AppState extends ChangeNotifier {
     if (transfer.status != TransferStatus.awaitingConfirmation) return false;
 
     transfer.status = TransferStatus.confirmed;
+    _recordActivity(
+      ActivityType.transferConfirmed,
+      'Transfer confirmed',
+      'The contractor marked an incoming demo transfer as received.',
+    );
     notifyListeners();
     return true;
   }

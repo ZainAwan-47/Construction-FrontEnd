@@ -44,11 +44,9 @@ class ContractorDashboardScreen extends StatelessWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.notifications_outlined),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () => Navigator.pushNamed(context, AppRouter.settingsRoute),
+                tooltip: 'Activity',
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRouter.activityCenterRoute),
               ),
               const SizedBox(width: 8),
             ],
@@ -80,7 +78,10 @@ class ContractorDashboardScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: const [
-                            Icon(Icons.download_rounded, color: AppColors.primaryBlue),
+                            Icon(
+                              Icons.download_rounded,
+                              color: AppColors.primaryBlue,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Incoming Transfer',
@@ -114,7 +115,10 @@ class ContractorDashboardScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         const Text(
                           'Awaiting your confirmation to enter Cash-in-Hand.',
-                          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
@@ -127,7 +131,9 @@ class ContractorDashboardScreen extends StatelessWidget {
                               if (!confirmed) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Transfer was not confirmed. Check its status and active role.'),
+                                    content: Text(
+                                      'Transfer was not confirmed. Check its status and active role.',
+                                    ),
                                     backgroundColor: AppColors.error,
                                     behavior: SnackBarBehavior.floating,
                                   ),
@@ -136,7 +142,9 @@ class ContractorDashboardScreen extends StatelessWidget {
                               }
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Funds confirmed. Cash-in-Hand updated.'),
+                                  content: Text(
+                                    'Funds confirmed. Cash-in-Hand updated.',
+                                  ),
                                   backgroundColor: AppColors.success,
                                   behavior: SnackBarBehavior.floating,
                                 ),
@@ -208,33 +216,6 @@ class ContractorDashboardScreen extends StatelessWidget {
                       ),
                     ),
                     QuickActionCard(
-                      title: 'My Expenses',
-                      subtitle: 'View history',
-                      icon: Icons.receipt_long_outlined,
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRouter.myExpensesRoute,
-                      ),
-                    ),
-                    QuickActionCard(
-                      title: 'Milestones',
-                      subtitle: 'Phase progress',
-                      icon: Icons.analytics_outlined,
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRouter.milestoneTrackerRoute,
-                      ),
-                    ),
-                    QuickActionCard(
-                      title: 'Settings',
-                      subtitle: 'Switch role',
-                      icon: Icons.settings_outlined,
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRouter.settingsRoute,
-                      ),
-                    ),
-                    QuickActionCard(
                       title: 'Handover Status',
                       subtitle: state.isProjectCompleted
                           ? 'Project handover complete'
@@ -269,8 +250,6 @@ class ContractorDashboardScreen extends StatelessWidget {
                 Navigator.pushNamed(context, AppRouter.milestoneTrackerRoute);
               } else if (index == 3) {
                 Navigator.pushNamed(context, AppRouter.settingsRoute);
-              } else if (index != 0) {
-                Navigator.pushNamed(context, AppRouter.placeholderRoute);
               }
             },
           ),

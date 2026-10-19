@@ -39,14 +39,9 @@ class OwnerDashboardScreen extends StatelessWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.notifications_outlined),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.account_circle_outlined),
-                onPressed: () => Navigator.pushNamed(
-                  context,
-                  AppRouter.settingsRoute,
-                ),
+                tooltip: 'Activity',
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRouter.activityCenterRoute),
               ),
               const SizedBox(width: 8),
             ],
@@ -79,19 +74,6 @@ class OwnerDashboardScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pushNamed(
-                            context,
-                            AppRouter.reviewQueueRoute,
-                          ),
-                          child: const Text(
-                            'Review Now',
-                            style: TextStyle(
-                              color: AppColors.primaryBlue,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -158,35 +140,6 @@ class OwnerDashboardScreen extends StatelessWidget {
                   childAspectRatio: 1.2,
                   children: [
                     QuickActionCard(
-                      title: 'Send Funds',
-                      subtitle: 'Top up contractor',
-                      icon: Icons.send_rounded,
-                      isPrimary: true,
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRouter.sendFundsRoute,
-                      ),
-                    ),
-                    QuickActionCard(
-                      title: 'Review Queue',
-                      subtitle: '${state.pendingReviewCount} pending',
-                      icon: Icons.fact_check_outlined,
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRouter.reviewQueueRoute,
-                      ),
-                    ),
-                    QuickActionCard(
-                      title: 'Milestones',
-                      subtitle: 'Phase tracking',
-                      icon: Icons.analytics_outlined,
-                      // PHASE 8: Wired to MilestoneTracker
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRouter.milestoneTrackerRoute,
-                      ),
-                    ),
-                    QuickActionCard(
                       title: 'Final Report',
                       subtitle: 'Project outcomes and finances',
                       icon: Icons.picture_as_pdf_outlined,
@@ -217,17 +170,15 @@ class OwnerDashboardScreen extends StatelessWidget {
             role: state.activeRole,
             currentIndex: 0,
             onTap: (index) {
-              if (index == 1) {
-                Navigator.pushNamed(context, AppRouter.sendFundsRoute);
-              } else if (index == 2) {
-                Navigator.pushNamed(context, AppRouter.reviewQueueRoute);
-              } else if (index == 3) {
-                // PHASE 8: Wired to MilestoneTracker
-                Navigator.pushNamed(context, AppRouter.milestoneTrackerRoute);
-              } else if (index == 4) {
-                Navigator.pushNamed(context, AppRouter.settingsRoute);
-              } else if (index != 0) {
-                Navigator.pushNamed(context, AppRouter.placeholderRoute);
+              switch (index) {
+                case 1:
+                  Navigator.pushNamed(context, AppRouter.sendFundsRoute);
+                case 2:
+                  Navigator.pushNamed(context, AppRouter.reviewQueueRoute);
+                case 3:
+                  Navigator.pushNamed(context, AppRouter.milestoneTrackerRoute);
+                case 4:
+                  Navigator.pushNamed(context, AppRouter.settingsRoute);
               }
             },
           ),
