@@ -18,6 +18,7 @@ class ConstructionApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           debugShowCheckedModeBanner: false,
           initialRoute: AppRouter.initialRoute,
+          onGenerateInitialRoutes: AppRouter.generateInitialRoutes,
           onGenerateRoute: AppRouter.generateRoute,
         );
       },
