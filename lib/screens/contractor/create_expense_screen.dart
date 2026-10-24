@@ -14,7 +14,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   String? _selectedCategory;
   bool _receiptAttached = false;
   bool _attemptedSubmit = false;
@@ -26,7 +26,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
     'Plumbing',
     'Transport',
     'Equipment',
-    'Other'
+    'Other',
   ];
 
   void _mockAttachReceipt() {
@@ -40,7 +40,9 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
       _attemptedSubmit = true;
     });
 
-    if (_formKey.currentState!.validate() && _receiptAttached && _selectedCategory != null) {
+    if (_formKey.currentState!.validate() &&
+        _receiptAttached &&
+        _selectedCategory != null) {
       final amount = parsePositivePkrAmount(_amountController.text);
       if (amount == null) return;
 
@@ -53,7 +55,9 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
       if (!added) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Expense was not submitted. Check the amount and active role.'),
+            content: Text(
+              'Expense was not submitted. Check the amount and active role.',
+            ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -69,16 +73,14 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
         ),
       );
       Navigator.pop(context); // Returns to Dashboard
-      }
-      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surfaceWarmGray,
-      appBar: AppBar(
-        title: const Text('Create Expense'),
-      ),
+      appBar: AppBar(title: const Text('Create Expense')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -87,9 +89,16 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Expense Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                const Text(
+                  'Expense Details',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryBlue,
+                  ),
+                ),
                 const SizedBox(height: 16),
-                
+
                 // Category Dropdown
                 DropdownButtonFormField<String>(
                   initialValue: _selectedCategory,
@@ -98,27 +107,40 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                     filled: true,
                     fillColor: AppColors.surfaceWhite,
                     prefixIcon: const Icon(Icons.category_outlined),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  items: _categories.map((cat) => DropdownMenuItem(value: cat, child: Text(cat))).toList(),
+                  items: _categories
+                      .map(
+                        (cat) => DropdownMenuItem(value: cat, child: Text(cat)),
+                      )
+                      .toList(),
                   onChanged: (val) => setState(() => _selectedCategory = val),
-                  validator: (value) => value == null ? 'Please select a category' : null,
+                  validator: (value) =>
+                      value == null ? 'Please select a category' : null,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Amount Field
                 TextFormField(
                   controller: _amountController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Amount (PKR)',
                     filled: true,
                     fillColor: AppColors.surfaceWhite,
                     prefixIcon: const Icon(Icons.payments_outlined),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return 'Please enter an amount';
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an amount';
+                    }
                     if (parsePositivePkrAmount(value) == null) {
                       return 'Enter a valid amount greater than 0';
                     }
@@ -140,37 +162,62 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                       padding: EdgeInsets.only(bottom: 32.0),
                       child: Icon(Icons.description_outlined),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  validator: (value) => value == null || value.trim().isEmpty ? 'Please provide a description' : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Please provide a description'
+                      : null,
                 ),
                 const SizedBox(height: 24),
 
-                const Text('Receipt (Demo Attachment Required)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                const Text(
+                  'Receipt (Demo Attachment Required)',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryBlue,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: _receiptAttached ? AppColors.success.withValues(alpha: 0.05) : AppColors.surfaceWhite,
+                    color: _receiptAttached
+                        ? AppColors.success.withValues(alpha: 0.05)
+                        : AppColors.surfaceWhite,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: _receiptAttached ? AppColors.success : (_attemptedSubmit && !_receiptAttached ? AppColors.error : Colors.grey.shade300),
+                      color: _receiptAttached
+                          ? AppColors.success
+                          : (_attemptedSubmit && !_receiptAttached
+                                ? AppColors.error
+                                : Colors.grey.shade300),
                       width: _receiptAttached ? 2 : 1,
                     ),
                   ),
                   child: Column(
                     children: [
                       Icon(
-                        _receiptAttached ? Icons.check_circle : Icons.receipt_long,
+                        _receiptAttached
+                            ? Icons.check_circle
+                            : Icons.receipt_long,
                         size: 40,
-                        color: _receiptAttached ? AppColors.success : AppColors.primaryBlue,
+                        color: _receiptAttached
+                            ? AppColors.success
+                            : AppColors.primaryBlue,
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _receiptAttached ? 'Demo receipt attached' : 'No demo receipt attached',
+                        _receiptAttached
+                            ? 'Demo receipt attached'
+                            : 'No demo receipt attached',
                         style: TextStyle(
-                          color: _receiptAttached ? AppColors.success : AppColors.textSecondary,
+                          color: _receiptAttached
+                              ? AppColors.success
+                              : AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -182,6 +229,7 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                           label: const Text('Attach Demo Receipt'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: AppColors.surfaceWhite,
                             minimumSize: const Size(200, 44),
                           ),
                         ),
@@ -191,7 +239,10 @@ class _CreateExpenseScreenState extends State<CreateExpenseScreen> {
                 if (_attemptedSubmit && !_receiptAttached)
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0, left: 12.0),
-                    child: Text('A demo receipt attachment is required', style: TextStyle(color: AppColors.error, fontSize: 12)),
+                    child: Text(
+                      'A demo receipt attachment is required',
+                      style: TextStyle(color: AppColors.error, fontSize: 12),
+                    ),
                   ),
                 const SizedBox(height: 32),
 

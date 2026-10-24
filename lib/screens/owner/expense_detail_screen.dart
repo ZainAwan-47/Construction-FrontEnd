@@ -24,7 +24,9 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
     if (!AppState().approveExpense(expense.id)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Expense was not approved. Check its status and active role.'),
+          content: Text(
+            'Expense was not approved. Check its status and active role.',
+          ),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -52,11 +54,16 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
       );
       return;
     }
-    
-    if (!AppState().disputeExpense(expense.id, _feedbackController.text.trim())) {
+
+    if (!AppState().disputeExpense(
+      expense.id,
+      _feedbackController.text.trim(),
+    )) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Expense was not disputed. Check its status and active role.'),
+          content: Text(
+            'Expense was not disputed. Check its status and active role.',
+          ),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -88,9 +95,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
-          appBar: AppBar(
-            title: const Text('Expense Details'),
-          ),
+          appBar: AppBar(title: const Text('Expense Details')),
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
@@ -102,24 +107,48 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isPending ? AppColors.warning.withValues(alpha: 0.1) : (expense.status == ExpenseStatus.approved ? AppColors.success.withValues(alpha: 0.1) : AppColors.error.withValues(alpha: 0.1)),
+                      color: isPending
+                          ? AppColors.warning.withValues(alpha: 0.1)
+                          : (expense.status == ExpenseStatus.approved
+                                ? AppColors.success.withValues(alpha: 0.1)
+                                : AppColors.error.withValues(alpha: 0.1)),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isPending ? AppColors.warning : (expense.status == ExpenseStatus.approved ? AppColors.success : AppColors.error),
+                        color: isPending
+                            ? AppColors.warning
+                            : (expense.status == ExpenseStatus.approved
+                                  ? AppColors.success
+                                  : AppColors.error),
                       ),
                     ),
                     child: Row(
                       children: [
                         Icon(
-                          isPending ? Icons.hourglass_empty : (expense.status == ExpenseStatus.approved ? Icons.lock_outline : Icons.error_outline),
-                          color: isPending ? AppColors.warning : (expense.status == ExpenseStatus.approved ? AppColors.success : AppColors.error),
+                          isPending
+                              ? Icons.hourglass_empty
+                              : (expense.status == ExpenseStatus.approved
+                                    ? Icons.lock_outline
+                                    : Icons.error_outline),
+                          color: isPending
+                              ? AppColors.warning
+                              : (expense.status == ExpenseStatus.approved
+                                    ? AppColors.success
+                                    : AppColors.error),
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          isPending ? 'Pending Review' : (expense.status == ExpenseStatus.approved ? 'Approved & Locked' : 'Disputed'),
+                          isPending
+                              ? 'Pending Review'
+                              : (expense.status == ExpenseStatus.approved
+                                    ? 'Approved & Locked'
+                                    : 'Disputed'),
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            color: isPending ? AppColors.warning : (expense.status == ExpenseStatus.approved ? AppColors.success : AppColors.error),
+                            color: isPending
+                                ? AppColors.warning
+                                : (expense.status == ExpenseStatus.approved
+                                      ? AppColors.success
+                                      : AppColors.error),
                           ),
                         ),
                       ],
@@ -134,49 +163,118 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.surfaceWhite,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Description', style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                        const Text(
+                          'Description',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text(expense.description, style: const TextStyle(fontSize: 18, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                        Text(
+                          expense.description,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const Divider(height: 32),
-                        
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('Category', style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                const Text(
+                                  'Category',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
-                                Text(expense.category, style: const TextStyle(fontSize: 15, color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                                Text(
+                                  expense.category,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ],
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                const Text('Amount', style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                                const Text(
+                                  'Amount',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
-                                Text(_formatCurrency(expense.amount), style: const TextStyle(fontSize: 18, color: AppColors.primaryOrange, fontWeight: FontWeight.bold)),
+                                Text(
+                                  _formatCurrency(expense.amount),
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: AppColors.primaryOrange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
                         ),
                         const Divider(height: 32),
-                        
-                        const Text('Date Submitted', style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+
+                        const Text(
+                          'Date Submitted',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text('${expense.date.day}/${expense.date.month}/${expense.date.year}', style: const TextStyle(fontSize: 15, color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                        Text(
+                          '${expense.date.day}/${expense.date.month}/${expense.date.year}',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 24),
 
                   // Receipt Mock
-                  const Text('Attached Demo Receipt', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                  const Text(
+                    'Attached Demo Receipt',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primaryBlue,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Container(
                     width: double.infinity,
@@ -189,15 +287,23 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                     child: Column(
                       children: [
                         Icon(
-                          expense.receiptAttached ? Icons.receipt_long : Icons.image_not_supported_outlined,
+                          expense.receiptAttached
+                              ? Icons.receipt_long
+                              : Icons.image_not_supported_outlined,
                           size: 40,
-                          color: expense.receiptAttached ? AppColors.primaryBlue : AppColors.hint,
+                          color: expense.receiptAttached
+                              ? AppColors.primaryBlue
+                              : AppColors.hint,
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          expense.receiptAttached ? 'Demo receipt attached' : 'No demo receipt attached',
+                          expense.receiptAttached
+                              ? 'Demo receipt attached'
+                              : 'No demo receipt attached',
                           style: TextStyle(
-                            color: expense.receiptAttached ? AppColors.primaryBlue : AppColors.hint,
+                            color: expense.receiptAttached
+                                ? AppColors.primaryBlue
+                                : AppColors.hint,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -208,7 +314,14 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
 
                   // Feedback & Actions (Dynamic based on status)
                   if (isPending) ...[
-                    const Text('Review Decision', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                    const Text(
+                      'Review Decision',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _feedbackController,
@@ -217,7 +330,9 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                         labelText: 'Reason for dispute (Required if disputing)',
                         filled: true,
                         fillColor: AppColors.surfaceWhite,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -230,9 +345,14 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                             label: const Text('Dispute'),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.error,
-                              side: const BorderSide(color: AppColors.error, width: 2),
+                              side: const BorderSide(
+                                color: AppColors.error,
+                                width: 2,
+                              ),
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
@@ -244,16 +364,26 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                             label: const Text('Approve'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.success,
+                              foregroundColor: AppColors.surfaceWhite,
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                  // PHASE 7: History List implementation replacing single feedback string
+                    // PHASE 7: History List implementation replacing single feedback string
                   ] else if (expense.feedbackHistory.isNotEmpty) ...[
-                    const Text('Dispute History', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue)),
+                    const Text(
+                      'Dispute History',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Container(
                       width: double.infinity,
@@ -261,32 +391,47 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                       decoration: BoxDecoration(
                         color: AppColors.surfaceWhite,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                        border: Border.all(
+                          color: AppColors.error.withValues(alpha: 0.3),
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: expense.feedbackHistory.asMap().entries.map((entry) {
+                        children: expense.feedbackHistory.asMap().entries.map((
+                          entry,
+                        ) {
                           final index = entry.key;
                           final text = entry.value;
-                          final isLatest = index == expense.feedbackHistory.length - 1;
-                          
+                          final isLatest =
+                              index == expense.feedbackHistory.length - 1;
+
                           return Padding(
-                            padding: EdgeInsets.only(bottom: isLatest ? 0 : 12.0),
+                            padding: EdgeInsets.only(
+                              bottom: isLatest ? 0 : 12.0,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  isLatest ? 'Latest Feedback' : 'Previous Feedback ${index + 1}',
+                                  isLatest
+                                      ? 'Latest Feedback'
+                                      : 'Previous Feedback ${index + 1}',
                                   style: TextStyle(
-                                    fontSize: 11, 
-                                    fontWeight: FontWeight.w800, 
-                                    color: isLatest ? AppColors.error : AppColors.hint
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    color: isLatest
+                                        ? AppColors.error
+                                        : AppColors.hint,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  text, 
-                                  style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontStyle: FontStyle.italic),
+                                  text,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: AppColors.textPrimary,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
                               ],
                             ),

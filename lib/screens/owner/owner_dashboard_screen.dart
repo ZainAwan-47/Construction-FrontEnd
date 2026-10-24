@@ -134,13 +134,7 @@ class _OwnerHomeTab extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.2,
+                QuickActionGrid(
                   children: [
                     QuickActionCard(
                       title: 'Final Report',

@@ -7,27 +7,28 @@ class StatusBadge extends StatelessWidget {
   final BadgeStatus status;
   final String text;
 
-  const StatusBadge({
-    super.key,
-    required this.status,
-    required this.text,
-  });
+  const StatusBadge({super.key, required this.status, required this.text});
 
   @override
   Widget build(BuildContext context) {
     Color bgColor;
+    Color foregroundColor;
     switch (status) {
       case BadgeStatus.pending:
         bgColor = AppColors.warning;
+        foregroundColor = AppColors.textPrimary;
         break;
       case BadgeStatus.approved:
         bgColor = AppColors.success;
+        foregroundColor = Colors.white;
         break;
       case BadgeStatus.disputed:
         bgColor = AppColors.error;
+        foregroundColor = Colors.white;
         break;
       case BadgeStatus.info:
         bgColor = AppColors.info;
+        foregroundColor = Colors.white;
         break;
     }
 
@@ -39,8 +40,8 @@ class StatusBadge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: foregroundColor,
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),

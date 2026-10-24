@@ -20,22 +20,49 @@ class ReviewQueueScreen extends StatelessWidget {
 
     switch (status) {
       case ExpenseStatus.pending:
-        bgColor = AppColors.warning; label = 'Pending'; icon = Icons.hourglass_empty; break;
+        bgColor = AppColors.warning;
+        label = 'Pending';
+        icon = Icons.hourglass_empty;
+        break;
       case ExpenseStatus.approved:
-        bgColor = AppColors.success; label = 'Approved'; icon = Icons.check_circle_outline; break;
+        bgColor = AppColors.success;
+        label = 'Approved';
+        icon = Icons.check_circle_outline;
+        break;
       case ExpenseStatus.disputed:
-        bgColor = AppColors.error; label = 'Disputed'; icon = Icons.error_outline; break;
+        bgColor = AppColors.error;
+        label = 'Disputed';
+        icon = Icons.error_outline;
+        break;
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: Colors.white),
+          Icon(
+            icon,
+            size: 12,
+            color: status == ExpenseStatus.pending
+                ? AppColors.textPrimary
+                : Colors.white,
+          ),
           const SizedBox(width: 4),
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
+          Text(
+            label,
+            style: TextStyle(
+              color: status == ExpenseStatus.pending
+                  ? AppColors.textPrimary
+                  : Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
@@ -67,13 +94,24 @@ class ReviewQueueScreen extends StatelessWidget {
             animation: AppState(),
             builder: (context, child) {
               final state = AppState();
-              final pending = state.allExpenses.where((e) => e.status == ExpenseStatus.pending).toList();
-              final approved = state.allExpenses.where((e) => e.status == ExpenseStatus.approved).toList();
-              final disputed = state.allExpenses.where((e) => e.status == ExpenseStatus.disputed).toList();
+              final pending = state.allExpenses
+                  .where((e) => e.status == ExpenseStatus.pending)
+                  .toList();
+              final approved = state.allExpenses
+                  .where((e) => e.status == ExpenseStatus.approved)
+                  .toList();
+              final disputed = state.allExpenses
+                  .where((e) => e.status == ExpenseStatus.disputed)
+                  .toList();
 
               Widget buildList(List<Expense> list, String emptyMessage) {
                 if (list.isEmpty) {
-                  return Center(child: Text(emptyMessage, style: const TextStyle(color: AppColors.textSecondary)));
+                  return Center(
+                    child: Text(
+                      emptyMessage,
+                      style: const TextStyle(color: AppColors.textSecondary),
+                    ),
+                  );
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -82,14 +120,16 @@ class ReviewQueueScreen extends StatelessWidget {
                     final expense = list[index];
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       elevation: 2,
                       child: InkWell(
                         onTap: () {
                           Navigator.pushNamed(
-                            context, 
-                            AppRouter.expenseDetailRoute, 
-                            arguments: expense.id
+                            context,
+                            AppRouter.expenseDetailRoute,
+                            arguments: expense.id,
                           );
                         },
                         borderRadius: BorderRadius.circular(16),
@@ -99,37 +139,71 @@ class ReviewQueueScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(expense.category, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                                  Text(
+                                    expense.category,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
                                   _buildStatusBadge(expense.status),
                                 ],
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 expense.description,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primaryBlue,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 _formatCurrency(expense.amount),
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primaryOrange),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.primaryOrange,
+                                ),
                               ),
                               const Divider(height: 16),
                               Row(
                                 children: [
-                                  const Icon(Icons.calendar_today, size: 14, color: AppColors.hint),
+                                  const Icon(
+                                    Icons.calendar_today,
+                                    size: 14,
+                                    color: AppColors.hint,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    '${expense.date.day}/${expense.date.month}/${expense.date.year}', 
-                                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)
+                                    '${expense.date.day}/${expense.date.month}/${expense.date.year}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary,
+                                    ),
                                   ),
                                   const Spacer(),
-                                  const Text('View Details', style: TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w700)),
+                                  const Text(
+                                    'View Details',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primaryBlue,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                   const SizedBox(width: 4),
-                                  const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.primaryBlue),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 12,
+                                    color: AppColors.primaryBlue,
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),

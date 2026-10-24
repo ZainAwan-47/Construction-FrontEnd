@@ -263,6 +263,7 @@ class _FinalInspectionScreenState extends State<FinalInspectionScreen> {
                     label: const Text('Approve Final Inspection'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: AppColors.surfaceWhite,
                       minimumSize: const Size(double.infinity, 48),
                     ),
                   ),

@@ -7,7 +7,15 @@ import '../../models/expense.dart';
 import '../../widgets/navigation/dashboard_tab_back_button.dart';
 
 class MyExpensesScreen extends StatelessWidget {
-  const MyExpensesScreen({super.key});
+  final List<Expense>? _expensesForTesting;
+
+  const MyExpensesScreen({super.key}) : _expensesForTesting = null;
+
+  @visibleForTesting
+  const MyExpensesScreen.withExpenses({
+    super.key,
+    required List<Expense> expenses,
+  }) : _expensesForTesting = expenses;
 
   String _formatCurrency(double value) {
     return formatPkrCurrency(value);
@@ -20,22 +28,49 @@ class MyExpensesScreen extends StatelessWidget {
 
     switch (status) {
       case ExpenseStatus.pending:
-        bgColor = AppColors.warning; label = 'Pending'; icon = Icons.hourglass_empty; break;
+        bgColor = AppColors.warning;
+        label = 'Pending';
+        icon = Icons.hourglass_empty;
+        break;
       case ExpenseStatus.approved:
-        bgColor = AppColors.success; label = 'Approved'; icon = Icons.check_circle_outline; break;
+        bgColor = AppColors.success;
+        label = 'Approved';
+        icon = Icons.check_circle_outline;
+        break;
       case ExpenseStatus.disputed:
-        bgColor = AppColors.error; label = 'Disputed'; icon = Icons.error_outline; break;
+        bgColor = AppColors.error;
+        label = 'Disputed';
+        icon = Icons.error_outline;
+        break;
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: Colors.white),
+          Icon(
+            icon,
+            size: 12,
+            color: status == ExpenseStatus.pending
+                ? AppColors.textPrimary
+                : Colors.white,
+          ),
           const SizedBox(width: 4),
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
+          Text(
+            label,
+            style: TextStyle(
+              color: status == ExpenseStatus.pending
+                  ? AppColors.textPrimary
+                  : Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
@@ -54,7 +89,61 @@ class MyExpensesScreen extends StatelessWidget {
         child: AnimatedBuilder(
           animation: AppState(),
           builder: (context, _) {
-            final expenses = AppState().allExpenses;
+            final expenses = _expensesForTesting ?? AppState().allExpenses;
+
+            if (expenses.isEmpty) {
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 76,
+                        height: 76,
+                        decoration: const BoxDecoration(
+                          color: AppColors.lightOrange,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.receipt_long_outlined,
+                          color: AppColors.primaryOrange,
+                          size: 36,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'No expenses yet',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.primaryBlue,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Create an expense and attach its demo receipt to start your expense history.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () => Navigator.pushNamed(
+                          context,
+                          AppRouter.createExpenseRoute,
+                        ),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Create Expense'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
 
             return ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -65,7 +154,9 @@ class MyExpensesScreen extends StatelessWidget {
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   elevation: 2,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -75,64 +166,115 @@ class MyExpensesScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(expense.category, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                            Text(
+                              expense.category,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                             _buildStatusBadge(expense.status),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
                           expense.description,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryBlue,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           _formatCurrency(expense.amount),
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primaryOrange),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primaryOrange,
+                          ),
                         ),
                         const Divider(height: 24),
                         Row(
                           children: [
-                            const Icon(Icons.calendar_today, size: 14, color: AppColors.hint),
+                            const Icon(
+                              Icons.calendar_today,
+                              size: 14,
+                              color: AppColors.hint,
+                            ),
                             const SizedBox(width: 6),
                             Text(
-                              '${expense.date.day}/${expense.date.month}/${expense.date.year}', 
-                              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)
+                              '${expense.date.day}/${expense.date.month}/${expense.date.year}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                             const Spacer(),
                             if (expense.receiptAttached)
                               Row(
                                 children: const [
-                                  Icon(Icons.attachment, size: 14, color: AppColors.primaryBlue),
+                                  Icon(
+                                    Icons.attachment,
+                                    size: 14,
+                                    color: AppColors.primaryBlue,
+                                  ),
                                   SizedBox(width: 4),
-                                  Text('Demo receipt attached', style: TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+                                  Text(
+                                    'Demo receipt attached',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primaryBlue,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ],
-                              )
+                              ),
                           ],
                         ),
                         // --- PHASE 7: DISPUTED EXPENSE ADJUSTMENT UI ---
-                        if (isDisputed && expense.feedbackHistory.isNotEmpty) ...[
+                        if (isDisputed &&
+                            expense.feedbackHistory.isNotEmpty) ...[
                           const SizedBox(height: 16),
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: AppColors.error.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                              border: Border.all(
+                                color: AppColors.error.withValues(alpha: 0.3),
+                              ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: const [
-                                    Icon(Icons.feedback_outlined, size: 14, color: AppColors.error),
+                                    Icon(
+                                      Icons.feedback_outlined,
+                                      size: 14,
+                                      color: AppColors.error,
+                                    ),
                                     SizedBox(width: 4),
-                                    Text('Latest Owner Feedback', style: TextStyle(fontSize: 12, color: AppColors.error, fontWeight: FontWeight.bold)),
+                                    Text(
+                                      'Latest Owner Feedback',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.error,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   expense.feedbackHistory.last,
-                                  style: const TextStyle(fontSize: 13, color: AppColors.textPrimary, fontStyle: FontStyle.italic),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.textPrimary,
+                                    fontStyle: FontStyle.italic,
+                                  ),
                                 ),
                               ],
                             ),
@@ -142,21 +284,28 @@ class MyExpensesScreen extends StatelessWidget {
                             width: double.infinity,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                Navigator.pushNamed(context, AppRouter.adjustExpenseRoute, arguments: expense.id);
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRouter.adjustExpenseRoute,
+                                  arguments: expense.id,
+                                );
                               },
                               icon: const Icon(Icons.edit_document),
                               label: const Text('Adjust & Resubmit'),
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: AppColors.surfaceWhite,
+                              ),
                             ),
                           ),
-                        ]
+                        ],
                       ],
                     ),
                   ),
                 );
               },
             );
-          }
+          },
         ),
       ),
     );

@@ -9,10 +9,12 @@ class AdjustDisputedExpenseScreen extends StatefulWidget {
   const AdjustDisputedExpenseScreen({super.key, required this.expenseId});
 
   @override
-  State<AdjustDisputedExpenseScreen> createState() => _AdjustDisputedExpenseScreenState();
+  State<AdjustDisputedExpenseScreen> createState() =>
+      _AdjustDisputedExpenseScreenState();
 }
 
-class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScreen> {
+class _AdjustDisputedExpenseScreenState
+    extends State<AdjustDisputedExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _amountController;
   late TextEditingController _descriptionController;
@@ -27,7 +29,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
     'Plumbing',
     'Transport',
     'Equipment',
-    'Other'
+    'Other',
   ];
 
   @override
@@ -37,7 +39,9 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
     final index = expenses.indexWhere((e) => e.id == widget.expenseId);
     if (index != -1) {
       final expense = expenses[index];
-      _amountController = TextEditingController(text: expense.amount.toString());
+      _amountController = TextEditingController(
+        text: expense.amount.toString(),
+      );
       _descriptionController = TextEditingController(text: expense.description);
       _selectedCategory = expense.category;
       _receiptAttached = expense.receiptAttached;
@@ -60,7 +64,9 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
 
   void _resubmitExpense() {
     setState(() => _attemptedSubmit = true);
-    if (_formKey.currentState!.validate() && _receiptAttached && _selectedCategory != null) {
+    if (_formKey.currentState!.validate() &&
+        _receiptAttached &&
+        _selectedCategory != null) {
       final amount = parsePositivePkrAmount(_amountController.text);
       if (amount == null) return;
 
@@ -74,7 +80,9 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
       if (!resubmitted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Expense was not resubmitted. Check its status and active role.'),
+            content: Text(
+              'Expense was not resubmitted. Check its status and active role.',
+            ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -151,7 +159,11 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
               children: [
                 const Text(
                   'Dispute History',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.error),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.error,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -160,11 +172,15 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                   decoration: BoxDecoration(
                     color: AppColors.surfaceWhite,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: AppColors.error.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: expense.feedbackHistory.asMap().entries.map((entry) {
+                    children: expense.feedbackHistory.asMap().entries.map((
+                      entry,
+                    ) {
                       final i = entry.key;
                       final text = entry.value;
                       final isLatest = i == expense.feedbackHistory.length - 1;
@@ -174,17 +190,24 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              isLatest ? 'Latest Feedback' : 'Previous Feedback ${i + 1}',
+                              isLatest
+                                  ? 'Latest Feedback'
+                                  : 'Previous Feedback ${i + 1}',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
-                                color: isLatest ? AppColors.error : AppColors.hint,
+                                color: isLatest
+                                    ? AppColors.error
+                                    : AppColors.hint,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               text,
-                              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.textPrimary,
+                              ),
                             ),
                           ],
                         ),
@@ -195,7 +218,11 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                 const SizedBox(height: 32),
                 const Text(
                   'Adjust Details',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryBlue,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
@@ -205,27 +232,38 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                     filled: true,
                     fillColor: AppColors.surfaceWhite,
                     prefixIcon: const Icon(Icons.category_outlined),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   items: _categories
-                      .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                      .map(
+                        (cat) => DropdownMenuItem(value: cat, child: Text(cat)),
+                      )
                       .toList(),
                   onChanged: (val) => setState(() => _selectedCategory = val),
-                  validator: (value) => value == null ? 'Please select a category' : null,
+                  validator: (value) =>
+                      value == null ? 'Please select a category' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _amountController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Amount (PKR)',
                     filled: true,
                     fillColor: AppColors.surfaceWhite,
                     prefixIcon: const Icon(Icons.payments_outlined),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) return 'Please enter an amount';
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an amount';
+                    }
                     if (parsePositivePkrAmount(value) == null) {
                       return 'Enter a valid amount greater than 0';
                     }
@@ -245,15 +283,22 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                       padding: EdgeInsets.only(bottom: 32.0),
                       child: Icon(Icons.description_outlined),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  validator: (value) =>
-                      value == null || value.trim().isEmpty ? 'Please provide a description' : null,
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? 'Please provide a description'
+                      : null,
                 ),
                 const SizedBox(height: 24),
                 const Text(
                   'Receipt (Demo Attachment Required)',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryBlue,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -268,23 +313,31 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                       color: _receiptAttached
                           ? AppColors.success
                           : (_attemptedSubmit && !_receiptAttached
-                              ? AppColors.error
-                              : Colors.grey.shade300),
+                                ? AppColors.error
+                                : Colors.grey.shade300),
                       width: _receiptAttached ? 2 : 1,
                     ),
                   ),
                   child: Column(
                     children: [
                       Icon(
-                        _receiptAttached ? Icons.check_circle : Icons.receipt_long,
+                        _receiptAttached
+                            ? Icons.check_circle
+                            : Icons.receipt_long,
                         size: 40,
-                        color: _receiptAttached ? AppColors.success : AppColors.primaryBlue,
+                        color: _receiptAttached
+                            ? AppColors.success
+                            : AppColors.primaryBlue,
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _receiptAttached ? 'Demo receipt attached' : 'No demo receipt attached',
+                        _receiptAttached
+                            ? 'Demo receipt attached'
+                            : 'No demo receipt attached',
                         style: TextStyle(
-                          color: _receiptAttached ? AppColors.success : AppColors.textSecondary,
+                          color: _receiptAttached
+                              ? AppColors.success
+                              : AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -296,6 +349,7 @@ class _AdjustDisputedExpenseScreenState extends State<AdjustDisputedExpenseScree
                           label: const Text('Update Demo Receipt'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: AppColors.surfaceWhite,
                             minimumSize: const Size(200, 44),
                           ),
                         ),

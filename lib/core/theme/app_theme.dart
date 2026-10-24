@@ -23,22 +23,20 @@ class AppTheme {
       // Updated to CardThemeData to match newer Flutter SDK requirements
       cardTheme: CardThemeData(
         color: AppColors.surfaceWhite,
-        elevation: 4, 
+        elevation: 4,
         shadowColor: Colors.black.withValues(alpha: 0.15),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.only(bottom: 12),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryOrange,
-          foregroundColor: AppColors.surfaceWhite,
-          elevation: 0, 
+          foregroundColor: AppColors.textPrimary,
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          minimumSize: const Size(double.infinity, 54), 
+          minimumSize: const Size(double.infinity, 54),
           textStyle: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,

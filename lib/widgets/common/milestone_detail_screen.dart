@@ -26,7 +26,8 @@ class MilestoneDetailScreen extends StatelessWidget {
         );
 
         final isComplete = milestone.status == MilestoneStatus.completed;
-        final isAwaitingSignOff = milestone.status == MilestoneStatus.awaitingSignOff;
+        final isAwaitingSignOff =
+            milestone.status == MilestoneStatus.awaitingSignOff;
         final inProgress = milestone.status == MilestoneStatus.inProgress;
 
         Color bannerColor;
@@ -53,9 +54,7 @@ class MilestoneDetailScreen extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
-          appBar: AppBar(
-            title: Text('Phase $milestoneId Details'),
-          ),
+          appBar: AppBar(title: Text('Phase $milestoneId Details')),
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
@@ -143,7 +142,11 @@ class MilestoneDetailScreen extends StatelessWidget {
                           const Divider(height: 28),
                           Row(
                             children: [
-                              const Icon(Icons.verified, size: 16, color: AppColors.success),
+                              const Icon(
+                                Icons.verified,
+                                size: 16,
+                                color: AppColors.success,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'Signed off on: ${milestone.completedDate!.day}/${milestone.completedDate!.month}/${milestone.completedDate!.year}',
@@ -169,7 +172,9 @@ class MilestoneDetailScreen extends StatelessWidget {
                             if (!state.signOffMilestone(milestoneId)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Milestone was not signed off. Check its status and active role.'),
+                                  content: Text(
+                                    'Milestone was not signed off. Check its status and active role.',
+                                  ),
                                   backgroundColor: AppColors.error,
                                   behavior: SnackBarBehavior.floating,
                                 ),
@@ -178,7 +183,9 @@ class MilestoneDetailScreen extends StatelessWidget {
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Milestone signed off. Next phase unlocked.'),
+                                content: Text(
+                                  'Milestone signed off. Next phase unlocked.',
+                                ),
                                 backgroundColor: AppColors.success,
                                 behavior: SnackBarBehavior.floating,
                               ),
@@ -186,7 +193,10 @@ class MilestoneDetailScreen extends StatelessWidget {
                           },
                           icon: const Icon(Icons.verified_outlined),
                           label: const Text('Owner Sign-Off & Complete Phase'),
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.success,
+                            foregroundColor: AppColors.surfaceWhite,
+                          ),
                         ),
                       )
                     else if (inProgress)
@@ -194,13 +204,23 @@ class MilestoneDetailScreen extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryOrange.withValues(alpha: 0.08),
+                          color: AppColors.primaryOrange.withValues(
+                            alpha: 0.08,
+                          ),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.primaryOrange.withValues(alpha: 0.4)),
+                          border: Border.all(
+                            color: AppColors.primaryOrange.withValues(
+                              alpha: 0.4,
+                            ),
+                          ),
                         ),
                         child: Row(
                           children: const [
-                            Icon(Icons.info_outline, color: AppColors.primaryOrange, size: 20),
+                            Icon(
+                              Icons.info_outline,
+                              color: AppColors.primaryOrange,
+                              size: 20,
+                            ),
                             SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -262,7 +282,9 @@ class MilestoneDetailScreen extends StatelessWidget {
                             if (!state.markMilestoneReady(milestoneId)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Milestone was not marked ready. Check its status and active role.'),
+                                  content: Text(
+                                    'Milestone was not marked ready. Check its status and active role.',
+                                  ),
                                   backgroundColor: AppColors.error,
                                   behavior: SnackBarBehavior.floating,
                                 ),
@@ -271,7 +293,9 @@ class MilestoneDetailScreen extends StatelessWidget {
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Milestone marked ready for Owner sign-off.'),
+                                content: Text(
+                                  'Milestone marked ready for Owner sign-off.',
+                                ),
                                 backgroundColor: AppColors.warning,
                                 behavior: SnackBarBehavior.floating,
                               ),
@@ -279,7 +303,10 @@ class MilestoneDetailScreen extends StatelessWidget {
                           },
                           icon: const Icon(Icons.assignment_turned_in_outlined),
                           label: const Text('Mark Ready for Owner Sign-Off'),
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryOrange),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryOrange,
+                            foregroundColor: AppColors.textPrimary,
+                          ),
                         ),
                       )
                     else if (isAwaitingSignOff)
@@ -289,11 +316,17 @@ class MilestoneDetailScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: AppColors.warning.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
+                          border: Border.all(
+                            color: AppColors.warning.withValues(alpha: 0.4),
+                          ),
                         ),
                         child: Row(
                           children: const [
-                            Icon(Icons.info_outline, color: AppColors.warning, size: 20),
+                            Icon(
+                              Icons.info_outline,
+                              color: AppColors.warning,
+                              size: 20,
+                            ),
                             SizedBox(width: 12),
                             Expanded(
                               child: Text(
