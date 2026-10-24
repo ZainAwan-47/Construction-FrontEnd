@@ -101,6 +101,7 @@ class AppState extends ChangeNotifier {
   }
 
   void switchRole(UserRole newRole) {
+    if (_activeRole == newRole) return;
     _activeRole = newRole;
     notifyListeners();
   }

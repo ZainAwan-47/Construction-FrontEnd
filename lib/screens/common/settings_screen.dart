@@ -263,7 +263,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           borderRadius: BorderRadius.circular(16),
                           side: BorderSide(
                             color: currentRole == UserRole.owner
-                                ? AppColors.primaryOrange
+                                ? AppColors.primaryOrangeForeground
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -317,7 +317,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 Radio<UserRole>(
                                   value: UserRole.owner,
-                                  activeColor: AppColors.primaryOrange,
+                                  activeColor:
+                                      AppColors.primaryOrangeForeground,
                                 ),
                               ],
                             ),
@@ -333,7 +334,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           borderRadius: BorderRadius.circular(16),
                           side: BorderSide(
                             color: currentRole == UserRole.contractor
-                                ? AppColors.primaryOrange
+                                ? AppColors.primaryOrangeForeground
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -358,7 +359,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                   child: const Icon(
                                     Icons.engineering,
-                                    color: AppColors.primaryOrange,
+                                    color: AppColors.primaryOrangeForeground,
                                     size: 26,
                                   ),
                                 ),
@@ -389,7 +390,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 Radio<UserRole>(
                                   value: UserRole.contractor,
-                                  activeColor: AppColors.primaryOrange,
+                                  activeColor:
+                                      AppColors.primaryOrangeForeground,
                                 ),
                               ],
                             ),

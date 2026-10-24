@@ -72,7 +72,10 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
     }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Expense Disputed. Returned to contractor.'),
+        content: Text(
+          'Expense Disputed. Returned to contractor.',
+          style: TextStyle(color: AppColors.textPrimary),
+        ),
         backgroundColor: AppColors.warning,
         behavior: SnackBarBehavior.floating,
       ),
@@ -115,7 +118,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isPending
-                            ? AppColors.warning
+                            ? AppColors.primaryOrangeForeground
                             : (expense.status == ExpenseStatus.approved
                                   ? AppColors.success
                                   : AppColors.error),
@@ -130,7 +133,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                                     ? Icons.lock_outline
                                     : Icons.error_outline),
                           color: isPending
-                              ? AppColors.warning
+                              ? AppColors.textPrimary
                               : (expense.status == ExpenseStatus.approved
                                     ? AppColors.success
                                     : AppColors.error),
@@ -145,7 +148,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: isPending
-                                ? AppColors.warning
+                                ? AppColors.textPrimary
                                 : (expense.status == ExpenseStatus.approved
                                       ? AppColors.success
                                       : AppColors.error),
@@ -234,7 +237,7 @@ class _ExpenseDetailScreenState extends State<ExpenseDetailScreen> {
                                   _formatCurrency(expense.amount),
                                   style: const TextStyle(
                                     fontSize: 18,
-                                    color: AppColors.primaryOrange,
+                                    color: AppColors.primaryOrangeForeground,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

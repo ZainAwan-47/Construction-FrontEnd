@@ -19,7 +19,10 @@ class PrimaryButton extends StatelessWidget {
       return OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColors.primaryOrange, width: 2),
+          side: const BorderSide(
+            color: AppColors.primaryOrangeForeground,
+            width: 2,
+          ),
           foregroundColor: AppColors.primaryBlue,
           minimumSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

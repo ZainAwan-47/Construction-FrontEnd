@@ -30,7 +30,12 @@ class MetricCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isHighlighted ? AppColors.lightOrange : AppColors.surfaceWhite,
         borderRadius: BorderRadius.circular(16),
-        border: isHighlighted ? Border.all(color: AppColors.primaryOrange.withValues(alpha: 0.3), width: 1.5) : null,
+        border: isHighlighted
+            ? Border.all(
+                color: AppColors.primaryOrange.withValues(alpha: 0.3),
+                width: 1.5,
+              )
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -49,8 +54,10 @@ class MetricCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
+                  style: TextStyle(
+                    color: isHighlighted
+                        ? AppColors.textPrimary
+                        : AppColors.textSecondary,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.3,
@@ -65,7 +72,9 @@ class MetricCard extends StatelessWidget {
           Text(
             _formatCurrency(amount),
             style: TextStyle(
-              color: isHighlighted ? AppColors.primaryOrange : AppColors.primaryBlue,
+              color: isHighlighted
+                  ? AppColors.primaryOrangeForeground
+                  : AppColors.primaryBlue,
               fontSize: 18,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.5,

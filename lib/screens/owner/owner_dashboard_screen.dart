@@ -7,6 +7,7 @@ import '../../widgets/dashboard/quick_action_card.dart';
 import '../../widgets/navigation/role_bottom_nav.dart';
 import '../../widgets/navigation/activity_notification_button.dart';
 import '../../widgets/navigation/dashboard_tab_back_button.dart';
+import '../../widgets/navigation/animated_tab_stack.dart';
 import '../../screens/owner/send_funds_screen.dart';
 import '../../screens/owner/review_queue_screen.dart';
 import '../../widgets/common/milestone_tracker_screen.dart';
@@ -68,7 +69,7 @@ class _OwnerHomeTab extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.pending_actions,
-                          color: AppColors.warning,
+                          color: AppColors.textPrimary,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -140,7 +141,7 @@ class _OwnerHomeTab extends StatelessWidget {
                       title: 'Final Report',
                       subtitle: 'Project outcomes and finances',
                       icon: Icons.picture_as_pdf_outlined,
-                      onTap: () => Navigator.pushNamed(
+                      onTap: () => AppRouter.pushNamedOnce(
                         context,
                         AppRouter.finalProjectReportRoute,
                       ),
@@ -153,7 +154,7 @@ class _OwnerHomeTab extends StatelessWidget {
                           ? 'Ready for inspection'
                           : '${state.handoverBlockers.length} outstanding items',
                       icon: Icons.fact_check_outlined,
-                      onTap: () => Navigator.pushNamed(
+                      onTap: () => AppRouter.pushNamedOnce(
                         context,
                         AppRouter.finalInspectionRoute,
                       ),
@@ -209,7 +210,7 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> {
         },
         child: Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
-          body: IndexedStack(
+          body: AnimatedTabStack(
             index: _selectedIndex,
             children: [
               const _OwnerHomeTab(),

@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/navigation/app_router.dart';
 import '../../state/app_state.dart';
 import '../../models/expense.dart';
+import '../../widgets/common/status_badge.dart';
 import '../../widgets/navigation/dashboard_tab_back_button.dart';
 
 class MyExpensesScreen extends StatelessWidget {
@@ -19,61 +20,6 @@ class MyExpensesScreen extends StatelessWidget {
 
   String _formatCurrency(double value) {
     return formatPkrCurrency(value);
-  }
-
-  Widget _buildStatusBadge(ExpenseStatus status) {
-    Color bgColor;
-    String label;
-    IconData icon;
-
-    switch (status) {
-      case ExpenseStatus.pending:
-        bgColor = AppColors.warning;
-        label = 'Pending';
-        icon = Icons.hourglass_empty;
-        break;
-      case ExpenseStatus.approved:
-        bgColor = AppColors.success;
-        label = 'Approved';
-        icon = Icons.check_circle_outline;
-        break;
-      case ExpenseStatus.disputed:
-        bgColor = AppColors.error;
-        label = 'Disputed';
-        icon = Icons.error_outline;
-        break;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 12,
-            color: status == ExpenseStatus.pending
-                ? AppColors.textPrimary
-                : Colors.white,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: status == ExpenseStatus.pending
-                  ? AppColors.textPrimary
-                  : Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -107,7 +53,7 @@ class MyExpensesScreen extends StatelessWidget {
                         ),
                         child: const Icon(
                           Icons.receipt_long_outlined,
-                          color: AppColors.primaryOrange,
+                          color: AppColors.primaryOrangeForeground,
                           size: 36,
                         ),
                       ),
@@ -132,7 +78,7 @@ class MyExpensesScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton.icon(
-                        onPressed: () => Navigator.pushNamed(
+                        onPressed: () => AppRouter.pushNamedOnce(
                           context,
                           AppRouter.createExpenseRoute,
                         ),
@@ -174,7 +120,7 @@ class MyExpensesScreen extends StatelessWidget {
                                 color: AppColors.textSecondary,
                               ),
                             ),
-                            _buildStatusBadge(expense.status),
+                            StatusBadge.forExpense(expense.status),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -192,7 +138,7 @@ class MyExpensesScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.primaryOrange,
+                            color: AppColors.primaryOrangeForeground,
                           ),
                         ),
                         const Divider(height: 24),
@@ -284,7 +230,7 @@ class MyExpensesScreen extends StatelessWidget {
                             width: double.infinity,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                Navigator.pushNamed(
+                                AppRouter.pushNamedOnce(
                                   context,
                                   AppRouter.adjustExpenseRoute,
                                   arguments: expense.id,

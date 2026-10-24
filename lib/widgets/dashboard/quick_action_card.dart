@@ -39,7 +39,7 @@ class QuickActionCard extends StatelessWidget {
                 size: 28,
                 color: isPrimary
                     ? AppColors.surfaceWhite
-                    : AppColors.primaryOrange,
+                    : AppColors.primaryOrangeForeground,
               ),
               const SizedBox(height: 16),
               Text(

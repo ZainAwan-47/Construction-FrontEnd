@@ -16,7 +16,7 @@ class ActivityNotificationButton extends StatelessWidget {
               ? 'Activity'
               : 'Activity, $count unread notifications',
           onPressed: () =>
-              Navigator.pushNamed(context, AppRouter.activityCenterRoute),
+              AppRouter.pushNamedOnce(context, AppRouter.activityCenterRoute),
           icon: Badge(
             isLabelVisible: count > 0,
             label: Text(count > 99 ? '99+' : '$count'),

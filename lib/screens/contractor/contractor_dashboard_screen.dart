@@ -8,6 +8,7 @@ import '../../widgets/dashboard/quick_action_card.dart';
 import '../../widgets/navigation/role_bottom_nav.dart';
 import '../../widgets/navigation/activity_notification_button.dart';
 import '../../widgets/navigation/dashboard_tab_back_button.dart';
+import '../../widgets/navigation/animated_tab_stack.dart';
 import '../../screens/contractor/my_expenses_screen.dart';
 import '../../widgets/common/milestone_tracker_screen.dart';
 import '../../screens/common/settings_screen.dart';
@@ -206,7 +207,7 @@ class _ContractorHomeTab extends StatelessWidget {
                       subtitle: 'Upload receipt',
                       icon: Icons.add_a_photo_outlined,
                       isPrimary: true,
-                      onTap: () => Navigator.pushNamed(
+                      onTap: () => AppRouter.pushNamedOnce(
                         context,
                         AppRouter.createExpenseRoute,
                       ),
@@ -217,7 +218,7 @@ class _ContractorHomeTab extends StatelessWidget {
                           ? 'Project handover complete'
                           : '${state.handoverBlockers.length} outstanding items',
                       icon: Icons.handshake_outlined,
-                      onTap: () => Navigator.pushNamed(
+                      onTap: () => AppRouter.pushNamedOnce(
                         context,
                         AppRouter.finalInspectionRoute,
                       ),
@@ -226,7 +227,7 @@ class _ContractorHomeTab extends StatelessWidget {
                       title: 'Final Project Report',
                       subtitle: 'Review project records',
                       icon: Icons.description_outlined,
-                      onTap: () => Navigator.pushNamed(
+                      onTap: () => AppRouter.pushNamedOnce(
                         context,
                         AppRouter.finalProjectReportRoute,
                       ),
@@ -283,7 +284,7 @@ class _ContractorDashboardScreenState extends State<ContractorDashboardScreen> {
         },
         child: Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
-          body: IndexedStack(
+          body: AnimatedTabStack(
             index: _selectedIndex,
             children: const [
               _ContractorHomeTab(),

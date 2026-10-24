@@ -10,18 +10,13 @@ class ConstructionApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appState,
-      builder: (context, child) {
-        return MaterialApp(
-          title: 'Construction Management',
-          theme: AppTheme.lightTheme,
-          debugShowCheckedModeBanner: false,
-          initialRoute: AppRouter.initialRoute,
-          onGenerateInitialRoutes: AppRouter.generateInitialRoutes,
-          onGenerateRoute: AppRouter.generateRoute,
-        );
-      },
+    return MaterialApp(
+      title: 'Construction Management',
+      theme: AppTheme.lightTheme,
+      debugShowCheckedModeBanner: false,
+      initialRoute: AppRouter.initialRoute,
+      onGenerateInitialRoutes: AppRouter.generateInitialRoutes,
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }

@@ -28,15 +28,26 @@ class AuthTextField extends StatelessWidget {
         obscureText: isPassword,
         validator: validator,
         keyboardType: keyboardType,
-        style: const TextStyle(fontSize: 15, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+        style: const TextStyle(
+          fontSize: 15,
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w500,
+        ),
         decoration: InputDecoration(
           filled: true,
           fillColor: AppColors.surfaceWhite,
           hintText: hintText,
-          hintStyle: const TextStyle(color: AppColors.hint, fontWeight: FontWeight.w400),
+          hintStyle: const TextStyle(
+            color: AppColors.hint,
+            fontWeight: FontWeight.w400,
+          ),
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Icon(icon, color: AppColors.primaryBlue.withValues(alpha: 0.6), size: 22),
+            child: Icon(
+              icon,
+              color: AppColors.primaryBlue.withValues(alpha: 0.6),
+              size: 22,
+            ),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -48,7 +59,10 @@ class AuthTextField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.primaryOrange, width: 2),
+            borderSide: const BorderSide(
+              color: AppColors.primaryOrangeForeground,
+              width: 2,
+            ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

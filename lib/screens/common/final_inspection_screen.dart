@@ -50,6 +50,9 @@ class _FinalInspectionScreenState extends State<FinalInspectionScreen> {
           approved
               ? 'Final inspection approved. The project is ready for handover.'
               : 'Inspection recorded. Outstanding items are available to the Contractor.',
+          style: TextStyle(
+            color: approved ? AppColors.surfaceWhite : AppColors.textPrimary,
+          ),
         ),
         backgroundColor: approved ? AppColors.success : AppColors.warning,
         behavior: SnackBarBehavior.floating,
@@ -288,7 +291,7 @@ class _FinalInspectionScreenState extends State<FinalInspectionScreen> {
                 ],
                 const SizedBox(height: 20),
                 OutlinedButton.icon(
-                  onPressed: () => Navigator.pushNamed(
+                  onPressed: () => AppRouter.pushNamedOnce(
                     context,
                     AppRouter.finalProjectReportRoute,
                   ),
@@ -333,6 +336,9 @@ class _StatusCard extends StatelessWidget {
         : inspection == null
         ? AppColors.warning
         : AppColors.error;
+    final foregroundColor = color == AppColors.warning
+        ? AppColors.textPrimary
+        : color;
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -345,7 +351,7 @@ class _StatusCard extends StatelessWidget {
         children: [
           Icon(
             completed ? Icons.verified : Icons.fact_check_outlined,
-            color: color,
+            color: foregroundColor,
             size: 30,
           ),
           const SizedBox(width: 14),
@@ -356,7 +362,7 @@ class _StatusCard extends StatelessWidget {
                 Text(
                   status,
                   style: TextStyle(
-                    color: color,
+                    color: foregroundColor,
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                   ),
@@ -424,7 +430,7 @@ class _ReadinessRow extends StatelessWidget {
     child: ListTile(
       leading: Icon(
         complete ? Icons.check_circle_outline : Icons.pending_outlined,
-        color: complete ? AppColors.success : AppColors.warning,
+        color: complete ? AppColors.success : AppColors.textPrimary,
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
       subtitle: Text(detail),

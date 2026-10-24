@@ -426,7 +426,7 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Card(
     child: ListTile(
-      leading: Icon(icon, color: AppColors.primaryOrange, size: 30),
+      leading: Icon(icon, color: AppColors.primaryOrangeForeground, size: 30),
       title: Text(
         title,
         style: const TextStyle(color: AppColors.textSecondary),
@@ -500,7 +500,7 @@ class _ReportAmountRow extends StatelessWidget {
                   status!,
                   style: const TextStyle(
                     fontSize: 11,
-                    color: AppColors.warning,
+                    color: AppColors.textPrimary,
                   ),
                 ),
             ],
@@ -536,7 +536,7 @@ class _ReportRecord extends StatelessWidget {
       dense: true,
       leading: Icon(
         complete ? Icons.check_circle_outline : Icons.pending_outlined,
-        color: complete ? AppColors.success : AppColors.warning,
+        color: complete ? AppColors.success : AppColors.textPrimary,
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
       subtitle: Text(detail),

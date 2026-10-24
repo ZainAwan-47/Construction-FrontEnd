@@ -121,14 +121,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () => Navigator.pushNamed(
+                            onPressed: () => AppRouter.pushNamedOnce(
                               context,
                               AppRouter.forgotPasswordRoute,
                             ),
                             child: const Text(
                               'Forgot Password?',
                               style: TextStyle(
-                                color: AppColors.primaryOrange,
+                                color: AppColors.primaryOrangeForeground,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -193,14 +193,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.pushNamed(
+                              onTap: () => AppRouter.pushNamedOnce(
                                 context,
                                 AppRouter.signupRoute,
                               ),
                               child: const Text(
                                 'Sign Up',
                                 style: TextStyle(
-                                  color: AppColors.primaryOrange,
+                                  color: AppColors.primaryOrangeForeground,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),

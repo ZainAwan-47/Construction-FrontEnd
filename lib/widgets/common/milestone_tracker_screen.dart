@@ -18,7 +18,11 @@ class MilestoneTrackerScreen extends StatelessWidget {
             color: AppColors.success.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.check_circle, color: AppColors.success, size: 20),
+          child: const Icon(
+            Icons.check_circle,
+            color: AppColors.success,
+            size: 20,
+          ),
         );
       case MilestoneStatus.awaitingSignOff:
         return Container(
@@ -28,7 +32,11 @@ class MilestoneTrackerScreen extends StatelessWidget {
             color: AppColors.warning.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.pending_actions, color: AppColors.warning, size: 20),
+          child: const Icon(
+            Icons.pending_actions,
+            color: AppColors.textPrimary,
+            size: 20,
+          ),
         );
       case MilestoneStatus.inProgress:
         return Container(
@@ -38,7 +46,11 @@ class MilestoneTrackerScreen extends StatelessWidget {
             color: AppColors.primaryOrange.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.construction, color: AppColors.primaryOrange, size: 20),
+          child: const Icon(
+            Icons.construction,
+            color: AppColors.primaryOrangeForeground,
+            size: 20,
+          ),
         );
       case MilestoneStatus.locked:
         return Container(
@@ -48,7 +60,11 @@ class MilestoneTrackerScreen extends StatelessWidget {
             color: Colors.grey.shade200,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.lock_outline, color: AppColors.hint, size: 20),
+          child: const Icon(
+            Icons.lock_outline,
+            color: AppColors.textSecondary,
+            size: 20,
+          ),
         );
     }
   }
@@ -71,11 +87,11 @@ class MilestoneTrackerScreen extends StatelessWidget {
       case MilestoneStatus.completed:
         return AppColors.success;
       case MilestoneStatus.awaitingSignOff:
-        return AppColors.warning;
+        return AppColors.textPrimary;
       case MilestoneStatus.inProgress:
-        return AppColors.primaryOrange;
+        return AppColors.primaryOrangeForeground;
       case MilestoneStatus.locked:
-        return AppColors.hint;
+        return AppColors.textSecondary;
     }
   }
 
@@ -141,7 +157,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.primaryOrange,
+                              color: AppColors.primaryOrangeForeground,
                             ),
                           ),
                         ],
@@ -153,7 +169,9 @@ class MilestoneTrackerScreen extends StatelessWidget {
                           value: progressFraction,
                           minHeight: 10,
                           backgroundColor: Colors.grey.shade200,
-                          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.success),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            AppColors.success,
+                          ),
                         ),
                       ),
                     ],
@@ -174,12 +192,16 @@ class MilestoneTrackerScreen extends StatelessWidget {
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     elevation: isLocked ? 0 : 2,
-                    color: isLocked ? AppColors.surfaceWhite.withValues(alpha: 0.6) : AppColors.surfaceWhite,
+                    color: isLocked
+                        ? AppColors.surfaceWhite.withValues(alpha: 0.6)
+                        : AppColors.surfaceWhite,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(
+                        AppRouter.pushNamedOnce(
                           context,
                           AppRouter.milestoneDetailRoute,
                           arguments: m.id,
@@ -197,14 +219,15 @@ class MilestoneTrackerScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'Phase ${m.id}',
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w600,
-                                          color: isLocked ? AppColors.hint : AppColors.textSecondary,
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
                                       Text(
@@ -223,7 +246,7 @@ class MilestoneTrackerScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
-                                      color: isLocked ? AppColors.hint : AppColors.primaryBlue,
+                                      color: AppColors.primaryBlue,
                                     ),
                                   ),
                                 ],
@@ -233,7 +256,9 @@ class MilestoneTrackerScreen extends StatelessWidget {
                             Icon(
                               Icons.arrow_forward_ios,
                               size: 13,
-                              color: isLocked ? AppColors.hint : AppColors.primaryBlue,
+                              color: isLocked
+                                  ? AppColors.textSecondary
+                                  : AppColors.primaryBlue,
                             ),
                           ],
                         ),

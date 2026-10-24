@@ -51,6 +51,13 @@ class MilestoneDetailScreen extends StatelessWidget {
           bannerText = 'Locked (Sequential Requirement)';
           bannerIcon = Icons.lock_outline;
         }
+        final bannerForegroundColor = isAwaitingSignOff
+            ? AppColors.textPrimary
+            : inProgress
+            ? AppColors.primaryOrangeForeground
+            : milestone.status == MilestoneStatus.locked
+            ? AppColors.textSecondary
+            : bannerColor;
 
         return Scaffold(
           backgroundColor: AppColors.surfaceWarmGray,
@@ -71,14 +78,14 @@ class MilestoneDetailScreen extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(bannerIcon, color: bannerColor),
+                        Icon(bannerIcon, color: bannerForegroundColor),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             bannerText,
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
-                              color: bannerColor,
+                              color: bannerForegroundColor,
                             ),
                           ),
                         ),
@@ -218,7 +225,7 @@ class MilestoneDetailScreen extends StatelessWidget {
                           children: const [
                             Icon(
                               Icons.info_outline,
-                              color: AppColors.primaryOrange,
+                              color: AppColors.primaryOrangeForeground,
                               size: 20,
                             ),
                             SizedBox(width: 12),
@@ -268,7 +275,7 @@ class MilestoneDetailScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.hint,
+                            color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -295,6 +302,9 @@ class MilestoneDetailScreen extends StatelessWidget {
                               const SnackBar(
                                 content: Text(
                                   'Milestone marked ready for Owner sign-off.',
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                  ),
                                 ),
                                 backgroundColor: AppColors.warning,
                                 behavior: SnackBarBehavior.floating,
@@ -324,7 +334,7 @@ class MilestoneDetailScreen extends StatelessWidget {
                           children: const [
                             Icon(
                               Icons.info_outline,
-                              color: AppColors.warning,
+                              color: AppColors.textPrimary,
                               size: 20,
                             ),
                             SizedBox(width: 12),
@@ -374,7 +384,7 @@ class MilestoneDetailScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.hint,
+                            color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
